@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saving Carbon Town — Carbon Clash Jeopardy</title>
+<style>
+  :root{
+    --bg1:#0a1929; --bg2:#0d2840; --panel:#0b2035;
+    --tile:#123a5e; --tile-hover:#1b5286; --tile-used:#0a1722;
+    --gold:#f5c542; --gold-deep:#d9a800;
+    --teal:#22d3a8; --teal-deep:#0e8f73;
+    --txt:#eaf4ff; --muted:#7fa6c4; --line:#1d4368;
+    --double:#e0479b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(120% 120% at 50% -10%, #143657 0%, var(--bg1) 55%, #05101c 100%);
+    color:var(--txt); min-height:100%;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{margin:0;}
+  .wrap{max-width:1280px;margin:0 auto;padding:18px 20px 60px;}
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;margin-bottom:14px;
+  }
+  .brand{display:flex;flex-direction:column;}
+  .kicker{
+    letter-spacing:.32em;font-size:11px;font-weight:700;color:var(--teal);
+    text-transform:uppercase;
+  }
+  .brand h1{
+    font-size:clamp(24px,4vw,40px);font-weight:900;line-height:1;
+    text-shadow:0 2px 0 rgba(0,0,0,.4);
+    background:linear-gradient(180deg,#fff,var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:4px;}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;}
+  button{
+    font:inherit;cursor:pointer;border:none;border-radius:10px;
+    padding:10px 16px;font-weight:700;color:#06202f;
+    background:linear-gradient(180deg,#ffe28a,var(--gold));
+    box-shadow:0 2px 0 var(--gold-deep),0 6px 14px rgba(0,0,0,.35);
+    transition:transform .08s ease, filter .15s ease;
+  }
+  button:hover{filter:brightness(1.06);}
+  button:active{transform:translateY(2px);box-shadow:0 0 0 var(--gold-deep);}
+  button.ghost{
+    background:transparent;color:var(--txt);
+    border:1px solid var(--line);box-shadow:none;font-weight:600;
+  }
+  button.ghost:hover{background:#0e2c47;}
+  button.final{
+    background:linear-gradient(180deg,#ff8fc7,var(--double));color:#2a0418;
+    box-shadow:0 2px 0 #b01f6e,0 6px 14px rgba(0,0,0,.35);
+  }
+
+  /* ---------- Board ---------- */
+  .board{
+    display:grid;grid-template-columns:repeat(6,1fr);gap:8px;
+    background:#05101c;padding:8px;border-radius:14px;
+    border:1px solid var(--line);
+  }
+  .cat{
+    background:linear-gradient(180deg,#1b4f7e,#0e3357);
+    border-radius:8px;padding:14px 8px;text-align:center;
+    font-weight:900;letter-spacing:.04em;
+    font-size:clamp(11px,1.15vw,15px);text-transform:uppercase;
+    display:flex;align-items:center;justify-content:center;min-height:74px;
+    color:#dff1ff;border:1px solid #2a6aa0;
+    text-shadow:0 1px 2px rgba(0,0,0,.5);
+  }
+  .tile{
+    background:linear-gradient(180deg,var(--tile),#0e2c49);
+    border:1px solid #1e4d77;border-radius:8px;
+    min-height:78px;display:flex;align-items:center;justify-content:center;
+    font-size:clamp(22px,3vw,34px);font-weight:900;color:var(--gold);
+    cursor:pointer;user-select:none;
+    text-shadow:0 2px 4px rgba(0,0,0,.6);
+    transition:transform .08s ease, background .15s ease, box-shadow .15s;
+  }
+  .tile:hover{background:linear-gradient(180deg,var(--tile-hover),#16467a);transform:scale(1.03);box-shadow:0 0 0 2px var(--teal) inset;}
+  .tile.used{
+    background:var(--tile-used);color:#26425c;cursor:default;
+    border-color:#13283b;text-shadow:none;
+  }
+  .tile.used:hover{transform:none;box-shadow:none;}
+  .tile.used::after{content:"✓";font-size:20px;}
+  .tile.used span{display:none;}
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(2,9,18,.82);
+    backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;z-index:50;
+    padding:20px;
+  }
+  .overlay.show{display:flex;animation:fade .2s ease;}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .card{
+    width:min(900px,96vw);background:linear-gradient(180deg,#0f3a63,#0a2641);
+    border:1px solid #2a6aa0;border-radius:18px;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+    padding:30px 34px 26px;text-align:center;position:relative;
+    animation:pop .22s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+  .card .meta{
+    display:flex;justify-content:space-between;align-items:center;
+    color:var(--muted);font-size:13px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;
+  }
+  .card .value{color:var(--gold);font-size:30px;font-weight:900;}
+  .timer{
+    margin:0 auto;width:max-content;display:flex;align-items:center;gap:10px;
+    background:#06192b;border:1px solid var(--line);border-radius:999px;
+    padding:8px 18px;
+  }
+  .timer .clock{
+    font-variant-numeric:tabular-nums;font-weight:900;font-size:30px;
+    color:var(--teal);letter-spacing:.04em;min-width:84px;text-align:center;
+  }
+  .timer.warn .clock{color:var(--gold);}
+  .timer.danger .clock{color:#ff6b6b;animation:pulse .6s infinite;}
+  .timer.done .clock{color:#ff4444;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .timer .tbtn{
+    background:transparent;color:var(--muted);border:1px solid var(--line);
+    box-shadow:none;padding:5px 12px;font-size:13px;font-weight:700;border-radius:8px;
+  }
+  .timer .tbtn:hover{background:#0e2c47;color:#fff;}
+  .timer-bar{height:5px;background:#06192b;border-radius:999px;overflow:hidden;margin:12px auto 0;max-width:520px;}
+  .timer-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width 1s linear;}
+  .clue{
+    font-size:clamp(20px,2.8vw,30px);font-weight:800;line-height:1.4;
+    margin:18px 0 24px;min-height:90px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .answer{
+    display:none;border-top:1px dashed #2a6aa0;padding-top:18px;margin-top:6px;
+  }
+  .answer.show{display:block;animation:fade .25s ease;}
+  .answer .a{
+    font-size:clamp(22px,3vw,34px);font-weight:900;color:var(--teal);
+    margin-bottom:6px;
+  }
+  .answer .why{color:#cfe6ff;font-size:15px;line-height:1.5;max-width:680px;margin:0 auto;}
+  .double-banner{
+    display:none;margin:0 auto 6px;width:max-content;
+    background:linear-gradient(180deg,#ff8fc7,var(--double));color:#2a0418;
+    font-weight:900;letter-spacing:.12em;font-size:13px;
+    padding:6px 16px;border-radius:999px;text-transform:uppercase;
+    box-shadow:0 4px 12px rgba(224,71,155,.5);
+  }
+  .double-banner.show{display:block;animation:pop .3s ease;}
+  .card .actions{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap;}
+  .close-x{
+    position:absolute;top:12px;right:14px;background:transparent;
+    color:var(--muted);font-size:24px;box-shadow:none;padding:4px 10px;
+    border-radius:8px;font-weight:700;
+  }
+  .close-x:hover{background:#0e2c47;color:#fff;}
+
+  /* ---------- Scoreboard ---------- */
+  .score-wrap{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;}
+  .score-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;}
+  .score-head h2{font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);}
+  .teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;}
+  .team{
+    background:linear-gradient(180deg,#103a5f,#0c2742);border:1px solid #1e4d77;
+    border-radius:10px;padding:10px 12px;
+  }
+  .team .tname{font-weight:800;font-size:14px;color:#dff1ff;margin-bottom:4px;outline:none;}
+  .team .tname:focus{box-shadow:0 0 0 2px var(--teal);border-radius:4px;}
+  .team .tscore{font-size:28px;font-weight:900;color:var(--gold);line-height:1.1;}
+  .team .tscore.saved{color:var(--teal);}
+  .team .saved-tag{display:none;font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--teal);text-transform:uppercase;}
+  .team .saved-tag.show{display:inline;}
+  .team .row{display:flex;gap:6px;margin-top:8px;}
+  .team .row input{
+    width:100%;background:#06192b;border:1px solid #1e4d77;color:var(--txt);
+    border-radius:8px;padding:6px 8px;font:inherit;font-weight:700;text-align:center;
+  }
+  .team .row input:focus{outline:none;border-color:var(--teal);}
+  .mini{padding:6px 10px;font-size:13px;border-radius:8px;}
+  .team .del{background:transparent;color:var(--muted);border:1px solid var(--line);box-shadow:none;padding:4px 8px;font-weight:700;}
+  .empty-note{color:var(--muted);font-size:14px;}
+  footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center;line-height:1.7;}
+  .legend{display:inline-flex;gap:6px;align-items:center;}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block;background:var(--double);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="kicker">Carbon Clash · EcoRise Camp</span>
+      <h1>SAVING CARBON TOWN</h1>
+      <span class="sub">All-Play Jeopardy · 6 categories · 36 clues · one smoggy town to save 🏭</span>
+    </div>
+    <div class="toolbar">
+      <button class="ghost" id="resetBtn">↻ Reset Board</button>
+    </div>
+  </header>
+
+  <div class="board" id="board"></div>
+
+  <div class="score-wrap">
+    <div class="score-head">
+      <h2>City Councils — Scoreboard</h2>
+      <button class="mini" id="addTeam">+ Add Council</button>
+    </div>
+    <div class="teams" id="teams"></div>
+    <p class="empty-note" id="emptyNote">No councils yet — add one to start tracking points. Most points wins!</p>
+  </div>
+
+  <footer>
+    <div class="legend"><span class="dot"></span> Two squares are hidden <b>★ Double Carbon</b> (×2 points) — revealed only after you read the clue.</div>
+    <div>Full board = 12,600 pts possible · Host reads the clue → teams write → “Boards up!” → reveal answer &amp; the why.</div>
+  </footer>
+</div>
+
+<!-- Clue modal -->
+<div class="overlay" id="overlay">
+  <div class="card" id="card">
+    <button class="close-x" id="closeX" title="Close (Esc)">✕</button>
+    <div class="meta"><span id="mCat">CATEGORY</span><span class="value" id="mVal">$100</span></div>
+    <div class="double-banner" id="doubleBanner">★ Double Carbon — points ×2!</div>
+    <div class="timer" id="timer">
+      <span class="clock" id="clock">1:00</span>
+      <button class="tbtn" id="pauseBtn">Pause</button>
+      <button class="tbtn" id="restartBtn">Restart</button>
+    </div>
+    <div class="timer-bar"><i id="timerBar"></i></div>
+    <div class="clue" id="mClue">Clue text…</div>
+    <div class="answer" id="mAnswer">
+      <div class="a" id="mA">Answer</div>
+      <div class="why" id="mWhy"></div>
+    </div>
+    <div class="actions">
+      <button id="revealBtn">Reveal Answer</button>
+      <button class="ghost" id="doneBtn">Mark Played &amp; Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ GAME DATA ============ */
+const CATEGORIES = ["SUPER SINKS","BIG STORES","CARBON CATCHERS","USUAL SUSPECTS","NAME THAT TERM","ON THE MOVE"];
+const VALUES = [100,200,300,400,500,600];
+
+// data[category][value] = {clue, answer, why, double}
+const DATA = {
+  "SUPER SINKS": {
+    100:{clue:"Waterlogged, muddy wetlands like bogs that store about 10× more carbon per area than ordinary land.", answer:"What is a peatland? (a wetland / bog)"},
+    200:{clue:"Salty coastal trees with tangled roots that capture roughly 4× more carbon than a normal forest.", answer:"What are mangroves?"},
+    300:{clue:"These coastal underwater meadows are about 40× better per area than forests at locking carbon.", answer:"What is seagrass? (a seagrass meadow)"},
+    400:{clue:"Soaking up over 30% of humanity’s CO₂ emissions, it’s Earth’s single biggest carbon sink.", answer:"What is the ocean?"},
+    500:{clue:"Tiny ocean drifters that act like sea-plants, turning dissolved CO₂ into organic matter.", answer:"What is plankton? (phytoplankton)"},
+    600:{clue:"Wetland mud stores carbon so well because it lacks THIS gas, which would let bacteria rot the plant matter.", answer:"What is oxygen?"},
+  },
+  "BIG STORES": {
+    100:{clue:"A tree locks carbon into its roots, its leaves, and this thick woody middle part.", answer:"What is the trunk?"},
+    200:{clue:"The biggest carbon store on land — this dark ground holds about 3× more carbon than the whole atmosphere.", answer:"What is soil?"},
+    300:{clue:"Cold northern ‘boreal’ forests keep most of their carbon HERE, not up in their branches.", answer:"What is underground? (in the soil)"},
+    400:{clue:"Unlike boreal forests, these warm jungles store more than half their carbon ABOVE ground.", answer:"What are tropical forests? (rainforests)"},
+    500:{clue:"Deep-tilling or exposing soil wakes up these tiny decomposers, which release stored carbon.", answer:"What are microbes? (bacteria and fungi)", why:"Extension note: slides cover microbes & soil as the largest store; the ‘tilling releases stored carbon’ link is an extension."},
+    600:{clue:"The dark, decay-resistant material left after matter breaks down, storing carbon in soil long-term.", answer:"What is humus?"},
+  },
+  "CARBON CATCHERS": {
+    100:{clue:"Filters bolted onto a factory’s smokestack that grab CO₂ from its concentrated exhaust.", answer:"What is point-source capture?"},
+    200:{clue:"This technology uses giant fans to pull CO₂ from open air — hard, since air is only ~0.04% CO₂.", answer:"What is Direct Air Capture? (DAC)"},
+    300:{clue:"To bury captured CO₂ underground safely, you need porous rock PLUS this sealing layer on top.", answer:"What is a cap (cap-rock) layer?"},
+    400:{clue:"Burning fuel in pure oxygen instead of plain air, which makes the CO₂ easier to capture.", answer:"What is oxy-fuel? (oxy-combustion)", double:true},
+    500:{clue:"In ‘pre-combustion’ capture, fossil fuel becomes mostly hydrogen plus this harmless substance.", answer:"What is water? (steam)"},
+    600:{clue:"After DAC’s special filters trap CO₂, they must be done THIS to release the gas for storage.", answer:"What is heated?"},
+  },
+  "USUAL SUSPECTS": {
+    100:{clue:"Coal, oil, and gas — burning them unleashes carbon that took millions of years to form.", answer:"What are fossil fuels?"},
+    200:{clue:"Bacteria in cows’ stomachs burp out this powerful greenhouse gas.", answer:"What is methane?"},
+    300:{clue:"The single LARGEST carbon source in the whole cycle — yes, it’s us.", answer:"What are humans? (human activity)"},
+    400:{clue:"Making cement and steel and shipping all our goods fall under this emissions-driving human activity.", answer:"What is industry? (manufacturing)"},
+    500:{clue:"Fossil fuels take 50–400 million years to form under this crushing combo deep underground.", answer:"What is pressure and heat?"},
+    600:{clue:"Burning wood is sold as ‘carbon-neutral,’ but it isn’t INSTANT because of this delay.", answer:"What is the time new trees take to regrow?", why:"Host note: the regrowth-lag idea isn’t stated outright on the Session 2 slides — worth a sentence aloud."},
+  },
+  "NAME THAT TERM": {
+    100:{clue:"A place or process that actively captures and removes CO₂ from the air.", answer:"What is a sink?"},
+    200:{clue:"A place or process that puts out more CO₂ than it captures.", answer:"What is a source?"},
+    300:{clue:"Any physical place where carbon is held — soil, oceans, forests, or fossil fuels.", answer:"What is a store? (storage)"},
+    400:{clue:"The fancy science word for permanently capturing and locking CO₂ away for good.", answer:"What is sequestration?"},
+    500:{clue:"The cycle’s ‘central hub,’ where greenhouse gases build up and carbon flows in and out.", answer:"What is the atmosphere?"},
+    600:{clue:"Carbon stored by coastal ecosystems like mangroves and seagrass has this colorful two-word name.", answer:"What is blue carbon?"},
+  },
+  "ON THE MOVE": {
+    100:{clue:"The process plants use to take in CO₂, water, and sunlight — making them a carbon sink.", answer:"What is photosynthesis?"},
+    200:{clue:"Animals and plants release CO₂ into the air through this process — basically breathing out.", answer:"What is respiration?"},
+    300:{clue:"When dead plants and animals rot, this process moves their carbon down into the soil.", answer:"What is decomposition?"},
+    400:{clue:"Humans dig and drill to pull fossil fuels out of the ground in this process.", answer:"What is extraction?"},
+    500:{clue:"Over ages, dead matter gets pressed deep underground in this process, slowly forming fossil fuels.", answer:"What is burial?", double:true},
+    600:{clue:"When the ocean takes CO₂ straight from the air and dissolves it into seawater, that’s this process.", answer:"What is absorption?"},
+  },
+};
+
+/* ============ STATE ============ */
+const used = {};            // "cat|val" -> true
+let current = null;         // {cat,val} or {final:true}
+let teams = [];             // {name, score}
+let teamSeq = 0;
+
+/* ============ BOARD RENDER ============ */
+const boardEl = document.getElementById('board');
+function buildBoard(){
+  boardEl.innerHTML='';
+  CATEGORIES.forEach(c=>{
+    const d=document.createElement('div');d.className='cat';d.textContent=c;boardEl.appendChild(d);
+  });
+  VALUES.forEach(v=>{
+    CATEGORIES.forEach(c=>{
+      const key=c+'|'+v;
+      const t=document.createElement('div');
+      t.className='tile'+(used[key]?' used':'');
+      t.dataset.key=key;
+      t.innerHTML='<span>'+v+'</span>';
+      t.onclick=()=>{ if(!used[key]) openClue(c,v); };
+      boardEl.appendChild(t);
+    });
+  });
+}
+
+/* ============ CLUE MODAL ============ */
+const overlay=document.getElementById('overlay');
+const mCat=document.getElementById('mCat'), mVal=document.getElementById('mVal');
+const mClue=document.getElementById('mClue'), mAnswer=document.getElementById('mAnswer');
+const mA=document.getElementById('mA'), mWhy=document.getElementById('mWhy');
+const doubleBanner=document.getElementById('doubleBanner');
+const revealBtn=document.getElementById('revealBtn'), doneBtn=document.getElementById('doneBtn');
+
+/* ---- 60-second timer ---- */
+const TOTAL=60;
+const timerEl=document.getElementById('timer');
+const clockEl=document.getElementById('clock');
+const timerBar=document.getElementById('timerBar');
+const pauseBtn=document.getElementById('pauseBtn');
+let remaining=TOTAL, ticker=null, paused=false;
+
+function fmt(s){ return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function paintTimer(){
+  clockEl.textContent=fmt(remaining);
+  timerBar.style.width=(remaining/TOTAL*100)+'%';
+  timerEl.classList.toggle('warn', remaining<=20 && remaining>10);
+  timerEl.classList.toggle('danger', remaining<=10 && remaining>0);
+  timerEl.classList.toggle('done', remaining<=0);
+}
+function stopTimer(){ if(ticker){clearInterval(ticker);ticker=null;} }
+function startTimer(){
+  stopTimer(); remaining=TOTAL; paused=false; pauseBtn.textContent='Pause';
+  paintTimer();
+  ticker=setInterval(()=>{
+    if(paused) return;
+    remaining--;
+    if(remaining<=0){ remaining=0; paintTimer(); stopTimer(); clockEl.textContent="TIME!"; return; }
+    paintTimer();
+  },1000);
+}
+pauseBtn.onclick=()=>{
+  if(remaining<=0) return;
+  paused=!paused; pauseBtn.textContent=paused?'Resume':'Pause';
+};
+document.getElementById('restartBtn').onclick=startTimer;
+
+function openClue(cat,val){
+  const item=DATA[cat][val];
+  current={cat,val};
+  mCat.textContent=cat;
+  mVal.textContent=val+' pts';
+  mClue.textContent=item.clue;
+  mA.textContent='→ '+item.answer;
+  mWhy.innerHTML=item.why||'';
+  mWhy.style.display=item.why?'block':'none';
+  mAnswer.classList.remove('show');
+  doubleBanner.classList.remove('show');
+  revealBtn.style.display='';
+  revealBtn.textContent='Reveal Answer';
+  doneBtn.textContent='Mark Played & Close';
+  overlay.classList.add('show');
+  startTimer();
+}
+
+revealBtn.onclick=()=>{
+  mAnswer.classList.add('show');
+  if(current && DATA[current.cat][current.val].double){
+    doubleBanner.classList.add('show');
+  }
+  revealBtn.style.display='none';
+};
+
+function closeModal(markUsed){
+  stopTimer();
+  if(markUsed && current){
+    used[current.cat+'|'+current.val]=true;
+    const t=boardEl.querySelector('[data-key="'+current.cat+'|'+current.val+'"]');
+    if(t){t.classList.add('used');}
+  }
+  overlay.classList.remove('show');
+  current=null;
+}
+doneBtn.onclick=()=>closeModal(true);
+document.getElementById('closeX').onclick=()=>closeModal(false);
+overlay.onclick=(e)=>{ if(e.target===overlay) closeModal(false); };
+document.addEventListener('keydown',(e)=>{
+  if(!overlay.classList.contains('show')) return;
+  if(e.key==='Escape') closeModal(false);
+  if(e.key===' '||e.key==='Enter'){ if(revealBtn.style.display!=='none'){e.preventDefault();revealBtn.click();} }
+});
+
+/* ============ SCOREBOARD ============ */
+const teamsEl=document.getElementById('teams');
+const emptyNote=document.getElementById('emptyNote');
+function renderTeams(){
+  teamsEl.innerHTML='';
+  emptyNote.style.display=teams.length?'none':'block';
+  teams.forEach(team=>{
+    const el=document.createElement('div');el.className='team';
+    el.innerHTML=`
+      <div class="tname" contenteditable="true" spellcheck="false">${team.name}</div>
+      <div class="tscore">${team.score.toLocaleString()}</div>
+      <div class="row">
+        <input type="number" placeholder="+ / − pts" />
+        <button class="mini addpts">Add</button>
+      </div>
+      <div class="row">
+        <button class="del" style="width:100%">Remove</button>
+      </div>`;
+    const nameEl=el.querySelector('.tname');
+    nameEl.onblur=()=>{ team.name=nameEl.textContent.trim()||'Council'; };
+    const input=el.querySelector('input');
+    const add=()=>{ const n=parseInt(input.value,10); if(!isNaN(n)){ team.score+=n; input.value=''; renderTeams(); } };
+    el.querySelector('.addpts').onclick=add;
+    input.onkeydown=(e)=>{ if(e.key==='Enter') add(); };
+    el.querySelector('.del').onclick=()=>{ teams=teams.filter(t=>t!==team); renderTeams(); };
+    teamsEl.appendChild(el);
+  });
+}
+document.getElementById('addTeam').onclick=()=>{
+  teamSeq++; teams.push({name:'City Council '+teamSeq, score:0}); renderTeams();
+};
+
+/* ============ CONTROLS ============ */
+document.getElementById('resetBtn').onclick=()=>{
+  if(confirm('Reset the board (mark every square unplayed)? Scores are kept.')){
+    for(const k in used) delete used[k];
+    buildBoard();
+  }
+};
+
+/* ============ INIT ============ */
+buildBoard();
+renderTeams();
+</script>
+</body>
+</html>
