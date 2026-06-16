@@ -3,465 +3,560 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saving Carbon Town — Carbon Clash Jeopardy</title>
+<title>Saving Carbon Town — Family Feud</title>
 <style>
   :root{
-    --bg1:#0a1929; --bg2:#0d2840; --panel:#0b2035;
-    --tile:#123a5e; --tile-hover:#1b5286; --tile-used:#0a1722;
-    --gold:#f5c542; --gold-deep:#d9a800;
-    --teal:#22d3a8; --teal-deep:#0e8f73;
-    --txt:#eaf4ff; --muted:#7fa6c4; --line:#1d4368;
-    --double:#e0479b;
+    --bg1:#0a1929;--bg2:#0d2840;--panel:#0b2035;
+    --tile:#1b4f7e;--tile-hover:#2563aa;
+    --gold:#f5c542;--gold-deep:#d9a800;
+    --teal:#22d3a8;--teal-deep:#0e8f73;
+    --txt:#eaf4ff;--muted:#7fa6c4;--line:#1d4368;
+    --red:#ef4444;--red-deep:#b91c1c;
+    --pink:#e0479b;
   }
-  *{box-sizing:border-box;}
-  html,body{margin:0;height:100%;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
   body{
     font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-    background:radial-gradient(120% 120% at 50% -10%, #143657 0%, var(--bg1) 55%, #05101c 100%);
-    color:var(--txt); min-height:100%;
-    -webkit-font-smoothing:antialiased;
+    background:radial-gradient(120% 120% at 50% -10%,#143657 0%,var(--bg1) 55%,#05101c 100%);
+    color:var(--txt);min-height:100%;-webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3{margin:0;}
-  .wrap{max-width:1280px;margin:0 auto;padding:18px 20px 60px;}
+  button{font:inherit;cursor:pointer;}
 
-  /* ---------- Header ---------- */
-  header{
-    display:flex;align-items:center;justify-content:space-between;
-    gap:16px;flex-wrap:wrap;margin-bottom:14px;
-  }
-  .brand{display:flex;flex-direction:column;}
-  .kicker{
-    letter-spacing:.32em;font-size:11px;font-weight:700;color:var(--teal);
-    text-transform:uppercase;
-  }
-  .brand h1{
-    font-size:clamp(24px,4vw,40px);font-weight:900;line-height:1;
-    text-shadow:0 2px 0 rgba(0,0,0,.4);
+  /* ===== SCREENS ===== */
+  .screen{display:none;}
+  .screen.active{display:block;}
+  #gameScreen.active{display:flex;flex-direction:column;min-height:100vh;}
+
+  /* ===== MENU ===== */
+  #menuScreen{max-width:1120px;margin:0 auto;padding:44px 20px 60px;}
+  .menu-header{text-align:center;margin-bottom:40px;}
+  .kicker{display:block;letter-spacing:.3em;font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;margin-bottom:10px;}
+  .menu-header h1{
+    font-size:clamp(30px,5vw,54px);font-weight:900;line-height:1;
     background:linear-gradient(180deg,#fff,var(--gold));
     -webkit-background-clip:text;background-clip:text;color:transparent;
+    margin-bottom:10px;
   }
-  .brand .sub{font-size:12px;color:var(--muted);margin-top:4px;}
-  .toolbar{display:flex;gap:8px;flex-wrap:wrap;}
-  button{
-    font:inherit;cursor:pointer;border:none;border-radius:10px;
-    padding:10px 16px;font-weight:700;color:#06202f;
-    background:linear-gradient(180deg,#ffe28a,var(--gold));
-    box-shadow:0 2px 0 var(--gold-deep),0 6px 14px rgba(0,0,0,.35);
-    transition:transform .08s ease, filter .15s ease;
+  .menu-header p{color:var(--muted);font-size:15px;}
+  .game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+  .game-card{
+    background:linear-gradient(180deg,#103a5f,#0c2742);
+    border:1px solid var(--line);border-radius:16px;padding:22px 24px;
+    cursor:pointer;position:relative;overflow:hidden;
+    transition:transform .1s,box-shadow .15s;
   }
-  button:hover{filter:brightness(1.06);}
-  button:active{transform:translateY(2px);box-shadow:0 0 0 var(--gold-deep);}
-  button.ghost{
-    background:transparent;color:var(--txt);
-    border:1px solid var(--line);box-shadow:none;font-weight:600;
-  }
-  button.ghost:hover{background:#0e2c47;}
-  button.final{
-    background:linear-gradient(180deg,#ff8fc7,var(--double));color:#2a0418;
-    box-shadow:0 2px 0 #b01f6e,0 6px 14px rgba(0,0,0,.35);
-  }
+  .game-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--c,var(--teal));}
+  .game-card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(0,0,0,.45);}
+  .game-card .gnum{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .game-card h2{font-size:20px;font-weight:900;margin-bottom:6px;}
+  .game-card p{font-size:13px;color:var(--muted);line-height:1.5;}
+  .game-card .qcount{margin-top:12px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c,var(--teal));}
 
-  /* ---------- Board ---------- */
-  .board{
-    display:grid;grid-template-columns:repeat(6,1fr);gap:8px;
-    background:#05101c;padding:8px;border-radius:14px;
-    border:1px solid var(--line);
+  /* ===== GAME HEADER ===== */
+  .game-hdr{
+    background:#06192b;border-bottom:1px solid var(--line);
+    padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
   }
-  .cat{
-    background:linear-gradient(180deg,#1b4f7e,#0e3357);
-    border-radius:8px;padding:14px 8px;text-align:center;
-    font-weight:900;letter-spacing:.04em;
-    font-size:clamp(11px,1.15vw,15px);text-transform:uppercase;
-    display:flex;align-items:center;justify-content:center;min-height:74px;
-    color:#dff1ff;border:1px solid #2a6aa0;
-    text-shadow:0 1px 2px rgba(0,0,0,.5);
-  }
-  .tile{
-    background:linear-gradient(180deg,var(--tile),#0e2c49);
-    border:1px solid #1e4d77;border-radius:8px;
-    min-height:78px;display:flex;align-items:center;justify-content:center;
-    font-size:clamp(22px,3vw,34px);font-weight:900;color:var(--gold);
-    cursor:pointer;user-select:none;
-    text-shadow:0 2px 4px rgba(0,0,0,.6);
-    transition:transform .08s ease, background .15s ease, box-shadow .15s;
-  }
-  .tile:hover{background:linear-gradient(180deg,var(--tile-hover),#16467a);transform:scale(1.03);box-shadow:0 0 0 2px var(--teal) inset;}
-  .tile.used{
-    background:var(--tile-used);color:#26425c;cursor:default;
-    border-color:#13283b;text-shadow:none;
-  }
-  .tile.used:hover{transform:none;box-shadow:none;}
-  .tile.used::after{content:"✓";font-size:20px;}
-  .tile.used span{display:none;}
-
-  /* ---------- Modal ---------- */
-  .overlay{
-    position:fixed;inset:0;background:rgba(2,9,18,.82);
-    backdrop-filter:blur(3px);
-    display:none;align-items:center;justify-content:center;z-index:50;
-    padding:20px;
-  }
-  .overlay.show{display:flex;animation:fade .2s ease;}
-  @keyframes fade{from{opacity:0}to{opacity:1}}
-  .card{
-    width:min(900px,96vw);background:linear-gradient(180deg,#0f3a63,#0a2641);
-    border:1px solid #2a6aa0;border-radius:18px;
-    box-shadow:0 30px 80px rgba(0,0,0,.6);
-    padding:30px 34px 26px;text-align:center;position:relative;
-    animation:pop .22s cubic-bezier(.2,1.4,.4,1);
-  }
-  @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-  .card .meta{
-    display:flex;justify-content:space-between;align-items:center;
-    color:var(--muted);font-size:13px;font-weight:700;
-    text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;
-  }
-  .card .value{color:var(--gold);font-size:30px;font-weight:900;}
-  .timer{
-    margin:0 auto;width:max-content;display:flex;align-items:center;gap:10px;
-    background:#06192b;border:1px solid var(--line);border-radius:999px;
-    padding:8px 18px;
-  }
-  .timer .clock{
-    font-variant-numeric:tabular-nums;font-weight:900;font-size:30px;
-    color:var(--teal);letter-spacing:.04em;min-width:84px;text-align:center;
-  }
-  .timer.warn .clock{color:var(--gold);}
-  .timer.danger .clock{color:#ff6b6b;animation:pulse .6s infinite;}
-  .timer.done .clock{color:#ff4444;}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-  .timer .tbtn{
+  .game-hdr .title{font-weight:900;font-size:17px;}
+  .game-hdr .rinfo{font-size:13px;color:var(--muted);font-weight:600;}
+  .btn-back{
     background:transparent;color:var(--muted);border:1px solid var(--line);
-    box-shadow:none;padding:5px 12px;font-size:13px;font-weight:700;border-radius:8px;
+    border-radius:8px;padding:7px 13px;font-weight:700;font-size:13px;
   }
-  .timer .tbtn:hover{background:#0e2c47;color:#fff;}
-  .timer-bar{height:5px;background:#06192b;border-radius:999px;overflow:hidden;margin:12px auto 0;max-width:520px;}
-  .timer-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width 1s linear;}
-  .clue{
-    font-size:clamp(20px,2.8vw,30px);font-weight:800;line-height:1.4;
-    margin:18px 0 24px;min-height:90px;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .answer{
-    display:none;border-top:1px dashed #2a6aa0;padding-top:18px;margin-top:6px;
-  }
-  .answer.show{display:block;animation:fade .25s ease;}
-  .answer .a{
-    font-size:clamp(22px,3vw,34px);font-weight:900;color:var(--teal);
-    margin-bottom:6px;
-  }
-  .answer .why{color:#cfe6ff;font-size:15px;line-height:1.5;max-width:680px;margin:0 auto;}
-  .double-banner{
-    display:none;margin:0 auto 6px;width:max-content;
-    background:linear-gradient(180deg,#ff8fc7,var(--double));color:#2a0418;
-    font-weight:900;letter-spacing:.12em;font-size:13px;
-    padding:6px 16px;border-radius:999px;text-transform:uppercase;
-    box-shadow:0 4px 12px rgba(224,71,155,.5);
-  }
-  .double-banner.show{display:block;animation:pop .3s ease;}
-  .card .actions{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap;}
-  .close-x{
-    position:absolute;top:12px;right:14px;background:transparent;
-    color:var(--muted);font-size:24px;box-shadow:none;padding:4px 10px;
-    border-radius:8px;font-weight:700;
-  }
-  .close-x:hover{background:#0e2c47;color:#fff;}
+  .btn-back:hover{background:#0e2c47;color:var(--txt);}
 
-  /* ---------- Scoreboard ---------- */
-  .score-wrap{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;}
-  .score-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;}
-  .score-head h2{font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);}
-  .teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;}
-  .team{
-    background:linear-gradient(180deg,#103a5f,#0c2742);border:1px solid #1e4d77;
-    border-radius:10px;padding:10px 12px;
+  /* ===== GAME BODY ===== */
+  .game-body{
+    flex:1;display:grid;grid-template-columns:190px 1fr 190px;
+    gap:0;padding:16px 16px 0;max-width:1280px;margin:0 auto;width:100%;align-items:start;
   }
-  .team .tname{font-weight:800;font-size:14px;color:#dff1ff;margin-bottom:4px;outline:none;}
-  .team .tname:focus{box-shadow:0 0 0 2px var(--teal);border-radius:4px;}
-  .team .tscore{font-size:28px;font-weight:900;color:var(--gold);line-height:1.1;}
-  .team .tscore.saved{color:var(--teal);}
-  .team .saved-tag{display:none;font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--teal);text-transform:uppercase;}
-  .team .saved-tag.show{display:inline;}
-  .team .row{display:flex;gap:6px;margin-top:8px;}
-  .team .row input{
-    width:100%;background:#06192b;border:1px solid #1e4d77;color:var(--txt);
-    border-radius:8px;padding:6px 8px;font:inherit;font-weight:700;text-align:center;
+
+  /* ===== TEAM PANELS ===== */
+  .tpanel{
+    background:linear-gradient(180deg,#103a5f,#0c2742);
+    border:1px solid var(--line);border-radius:14px;padding:14px 12px;
+    text-align:center;position:sticky;top:16px;transition:border-color .2s,box-shadow .2s;
   }
-  .team .row input:focus{outline:none;border-color:var(--teal);}
-  .mini{padding:6px 10px;font-size:13px;border-radius:8px;}
-  .team .del{background:transparent;color:var(--muted);border:1px solid var(--line);box-shadow:none;padding:4px 8px;font-weight:700;}
-  .empty-note{color:var(--muted);font-size:14px;}
-  footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center;line-height:1.7;}
-  .legend{display:inline-flex;gap:6px;align-items:center;}
-  .dot{width:10px;height:10px;border-radius:3px;display:inline-block;background:var(--double);}
+  .tpanel.t-active{border-color:var(--teal);box-shadow:0 0 0 2px rgba(34,211,168,.25);}
+  .tpanel.t-steal{border-color:var(--pink);animation:stealPulse 1s infinite;}
+  @keyframes stealPulse{0%,100%{box-shadow:0 0 0 2px rgba(224,71,155,.2);}50%{box-shadow:0 0 0 7px rgba(224,71,155,.45);}}
+  .t-lbl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+  .t-name{
+    font-size:14px;font-weight:900;color:var(--txt);display:block;
+    outline:none;border-radius:6px;padding:3px 5px;text-align:center;margin-bottom:8px;
+  }
+  .t-name:focus{background:#0e2c47;box-shadow:0 0 0 2px var(--teal);}
+  .t-score{font-size:42px;font-weight:900;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;}
+  .t-rnd{font-size:11px;color:var(--muted);font-weight:600;margin-top:3px;}
+  .t-badge{display:none;margin-top:8px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;}
+  .tpanel.t-active .badge-active{display:block;color:var(--teal);}
+  .tpanel.t-steal .badge-steal{display:block;color:var(--pink);}
+
+  /* ===== CENTER ===== */
+  .center{padding:0 14px;}
+  .q-box{
+    background:linear-gradient(180deg,#1b4f7e,#0e3357);
+    border:1px solid #2a6aa0;border-radius:14px;
+    padding:18px 22px;text-align:center;margin-bottom:14px;
+  }
+  .q-box .qlbl{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .q-box .qtxt{font-size:clamp(17px,2.4vw,25px);font-weight:800;line-height:1.4;color:#dff1ff;}
+
+  /* Phase banner */
+  .phase-banner{
+    display:none;margin:0 auto 12px;width:max-content;max-width:100%;
+    background:linear-gradient(180deg,#ff8fc7,var(--pink));color:#2a0418;
+    font-weight:900;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+    padding:7px 20px;border-radius:999px;text-align:center;
+    animation:pop .3s ease;
+  }
+  .phase-banner.show{display:block;}
+  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+
+  /* ===== ANSWER BOARD ===== */
+  .board{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;}
+
+  /* tile flip */
+  .tw{perspective:700px;height:76px;}
+  .ti{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+  .tw.revealed .ti{transform:rotateX(180deg);}
+  .tf,.tb{
+    position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;
+    display:flex;align-items:center;justify-content:center;font-weight:800;
+  }
+  .tf{
+    background:linear-gradient(180deg,var(--tile),#0e3357);
+    border:1px solid #2a6aa0;font-size:26px;color:var(--gold);
+    cursor:pointer;transition:background .15s;
+  }
+  .tf:hover{background:linear-gradient(180deg,var(--tile-hover),#1b4a80);}
+  .tw.revealed .tf{cursor:default;}
+  .tb{
+    background:linear-gradient(180deg,#c97010,#9a5108);
+    border:1px solid #f59e0b;transform:rotateX(180deg);
+    flex-direction:column;gap:1px;padding:7px 10px;text-align:center;
+  }
+  .tb .atxt{font-size:clamp(12px,1.6vw,15px);color:#fff;font-weight:800;line-height:1.25;}
+  .tb .apts{font-size:22px;font-weight:900;color:#fef3c7;}
+
+  /* ===== STRIKES ===== */
+  .strikes-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;}
+  .s-lbl{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
+  .s-marks{display:flex;gap:10px;}
+  .sm{
+    width:46px;height:46px;border-radius:50%;border:2px solid #1e4d77;
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;font-weight:900;color:transparent;transition:all .2s;
+  }
+  .sm.hit{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.15);animation:shk .35s ease;}
+  @keyframes shk{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+
+  /* ===== CONTROLS ===== */
+  .ctrl-bar{
+    background:#06192b;border-top:1px solid var(--line);
+    padding:12px 18px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+    position:sticky;bottom:0;
+  }
+  .btn{
+    border:none;border-radius:10px;padding:11px 18px;font-weight:800;font-size:14px;
+    transition:transform .08s,filter .15s;
+    box-shadow:0 2px 0 rgba(0,0,0,.35);
+  }
+  .btn:hover{filter:brightness(1.08);}
+  .btn:active{transform:translateY(2px);box-shadow:none;}
+  .btn-wrong{background:linear-gradient(180deg,#ef4444,var(--red-deep));color:#fff;}
+  .btn-steal-right{background:linear-gradient(180deg,#4ade80,#16a34a);color:#052e16;}
+  .btn-steal-wrong{background:linear-gradient(180deg,#ef4444,var(--red-deep));color:#fff;}
+  .btn-reveal{background:linear-gradient(180deg,#ffe28a,var(--gold));color:#06202f;}
+  .btn-next{background:linear-gradient(180deg,#4ade80,#16a34a);color:#052e16;}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line);box-shadow:none;}
+  .btn-ghost:hover{background:#0e2c47;color:var(--txt);}
+
+  /* ===== OVERLAYS ===== */
+  .overlay{position:fixed;inset:0;background:rgba(2,9,18,.85);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+  .overlay.show{display:flex;}
+  .modal{
+    width:min(580px,96vw);background:linear-gradient(180deg,#0f3a63,#0a2641);
+    border:1px solid #2a6aa0;border-radius:18px;padding:30px 34px;text-align:center;
+    animation:pop .22s ease;
+  }
+  .modal h2{font-size:clamp(22px,3.5vw,34px);font-weight:900;color:var(--gold);margin-bottom:6px;}
+  .modal .sub{color:var(--muted);font-size:15px;margin-bottom:22px;}
+  .ss-row{display:flex;gap:14px;justify-content:center;margin-bottom:22px;}
+  .ss{flex:1;background:#06192b;border:1px solid var(--line);border-radius:12px;padding:14px;}
+  .ss.winner{border-color:var(--teal);}
+  .ss .ssn{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px;}
+  .ss .ssp{font-size:34px;font-weight:900;color:var(--gold);}
+  .ss.winner .ssp{color:var(--teal);}
+  .modal-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+  @media(max-width:750px){
+    .game-body{grid-template-columns:1fr;gap:12px;}
+    .tpanel{position:static;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;}
+    .tpanel .t-score{font-size:28px;}
+    .t-badge{margin:0;}
+    .board{grid-template-columns:1fr;}
+    .tw{height:64px;}
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="brand">
-      <span class="kicker">Carbon Clash · EcoRise Camp</span>
-      <h1>SAVING CARBON TOWN</h1>
-      <span class="sub">All-Play Jeopardy · 6 categories · 36 clues · one smoggy town to save 🏭</span>
-    </div>
-    <div class="toolbar">
-      <button class="ghost" id="resetBtn">↻ Reset Board</button>
-    </div>
-  </header>
 
-  <div class="board" id="board"></div>
-
-  <div class="score-wrap">
-    <div class="score-head">
-      <h2>City Councils — Scoreboard</h2>
-      <button class="mini" id="addTeam">+ Add Council</button>
-    </div>
-    <div class="teams" id="teams"></div>
-    <p class="empty-note" id="emptyNote">No councils yet — add one to start tracking points. Most points wins!</p>
+<!-- ===== MENU ===== -->
+<div id="menuScreen" class="screen active">
+  <div class="menu-header">
+    <span class="kicker">Carbon Clash · EcoRise Camp</span>
+    <h1>SAVING CARBON TOWN</h1>
+    <p>Family Feud Edition · Choose a game</p>
   </div>
-
-  <footer>
-    <div class="legend"><span class="dot"></span> Two squares are hidden <b>★ Double Carbon</b> (×2 points) — revealed only after you read the clue.</div>
-    <div>Full board = 12,600 pts possible · Host reads the clue → teams write → “Boards up!” → reveal answer &amp; the why.</div>
-  </footer>
+  <div class="game-grid" id="gameGrid"></div>
 </div>
 
-<!-- Clue modal -->
-<div class="overlay" id="overlay">
-  <div class="card" id="card">
-    <button class="close-x" id="closeX" title="Close (Esc)">✕</button>
-    <div class="meta"><span id="mCat">CATEGORY</span><span class="value" id="mVal">$100</span></div>
-    <div class="double-banner" id="doubleBanner">★ Double Carbon — points ×2!</div>
-    <div class="timer" id="timer">
-      <span class="clock" id="clock">1:00</span>
-      <button class="tbtn" id="pauseBtn">Pause</button>
-      <button class="tbtn" id="restartBtn">Restart</button>
+<!-- ===== GAME ===== -->
+<div id="gameScreen" class="screen">
+  <div class="game-hdr">
+    <button class="btn-back" id="backBtn">← Menu</button>
+    <div class="title" id="hdrTitle">—</div>
+    <div class="rinfo" id="hdrRound">Round 1 of 3</div>
+  </div>
+
+  <div class="game-body">
+    <!-- Team 1 -->
+    <div class="tpanel" id="tp1">
+      <div class="t-lbl">Team 1</div>
+      <span class="t-name" id="tn1" contenteditable spellcheck="false">City Council A</span>
+      <div class="t-score" id="ts1">0</div>
+      <div class="t-rnd" id="tr1">+0 this round</div>
+      <div class="t-badge badge-active">▶ Playing</div>
+      <div class="t-badge badge-steal">★ STEAL!</div>
     </div>
-    <div class="timer-bar"><i id="timerBar"></i></div>
-    <div class="clue" id="mClue">Clue text…</div>
-    <div class="answer" id="mAnswer">
-      <div class="a" id="mA">Answer</div>
-      <div class="why" id="mWhy"></div>
+
+    <!-- Center -->
+    <div class="center">
+      <div class="q-box">
+        <div class="qlbl">Question</div>
+        <div class="qtxt" id="qText">—</div>
+      </div>
+      <div class="phase-banner" id="phaseBanner">★ STEAL TIME!</div>
+      <div class="board" id="board"></div>
+      <div class="strikes-row">
+        <span class="s-lbl">Strikes</span>
+        <div class="s-marks">
+          <div class="sm" id="sm0"></div>
+          <div class="sm" id="sm1"></div>
+          <div class="sm" id="sm2"></div>
+        </div>
+      </div>
     </div>
-    <div class="actions">
-      <button id="revealBtn">Reveal Answer</button>
-      <button class="ghost" id="doneBtn">Mark Played &amp; Close</button>
+
+    <!-- Team 2 -->
+    <div class="tpanel" id="tp2">
+      <div class="t-lbl">Team 2</div>
+      <span class="t-name" id="tn2" contenteditable spellcheck="false">City Council B</span>
+      <div class="t-score" id="ts2">0</div>
+      <div class="t-rnd" id="tr2">+0 this round</div>
+      <div class="t-badge badge-active">▶ Playing</div>
+      <div class="t-badge badge-steal">★ STEAL!</div>
+    </div>
+  </div>
+
+  <div class="ctrl-bar" id="ctrlBar">
+    <button class="btn btn-wrong" id="btnWrong">✗ Wrong Answer</button>
+    <button class="btn btn-steal-right" id="btnStealRight">✓ Steal — Right!</button>
+    <button class="btn btn-steal-wrong" id="btnStealWrong">✗ Steal — Wrong!</button>
+    <button class="btn btn-reveal" id="btnReveal">Reveal All</button>
+    <button class="btn btn-next" id="btnNext">Next Question →</button>
+  </div>
+</div>
+
+<!-- Round over -->
+<div class="overlay" id="roOverlay">
+  <div class="modal">
+    <h2 id="roTitle">Round Over!</h2>
+    <div class="sub" id="roSub">Points awarded.</div>
+    <div class="ss-row" id="roScores"></div>
+    <div class="modal-btns">
+      <button class="btn btn-next" id="btnRoNext">Next Question →</button>
+      <button class="btn btn-ghost" id="btnRoMenu">← Menu</button>
+    </div>
+  </div>
+</div>
+
+<!-- Game over -->
+<div class="overlay" id="goOverlay">
+  <div class="modal">
+    <h2>Game Over!</h2>
+    <div class="sub" id="goSub">Final scores:</div>
+    <div class="ss-row" id="goScores"></div>
+    <div class="modal-btns">
+      <button class="btn btn-reveal" id="btnGoMenu">← Back to Menu</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ============ GAME DATA ============ */
-const CATEGORIES = ["SUPER SINKS","BIG STORES","CARBON CATCHERS","USUAL SUSPECTS","NAME THAT TERM","ON THE MOVE"];
-const VALUES = [100,200,300,400,500,600];
+/* ============================================================
+   GAME DATA
+   ============================================================ */
+const GAMES = [
+  {
+    title:"Overview & Storage", color:"#22d3a8",
+    desc:"Overview and Storage slides",
+    questions:[
+      { q:"Name somewhere on Earth where carbon is stored.",
+        answers:[{t:"Soil / Underground",p:30},{t:"Ocean / Sea",p:25},{t:"Trees / Forests",p:22},{t:"Atmosphere",p:13},{t:"Fossil Fuels",p:10}]},
+      { q:"Name a step in the carbon cycle.",
+        answers:[{t:"Photosynthesis",p:35},{t:"Decomposition",p:28},{t:"Respiration / Breathing",p:22},{t:"Absorption",p:15}]},
+      { q:"Name something that makes a good carbon store.",
+        answers:[{t:"Forest / Trees",p:32},{t:"Ocean",p:28},{t:"Soil",p:22},{t:"Wetland / Bog",p:12},{t:"Atmosphere",p:6}]},
+    ]
+  },
+  {
+    title:"Sinks", color:"#3b82f6",
+    desc:"Ocean / Blue Carbon, Forests / Wetlands slides",
+    questions:[
+      { q:"Name a natural carbon sink.",
+        answers:[{t:"Ocean",p:33},{t:"Forest",p:28},{t:"Wetland / Bog / Peatland",p:20},{t:"Mangroves",p:12},{t:"Seagrass",p:7}]},
+      { q:"Name a type of 'blue carbon' ecosystem.",
+        answers:[{t:"Mangroves",p:44},{t:"Seagrass meadows",p:35},{t:"Salt marshes",p:21}]},
+      { q:"Name a reason the ocean is Earth's biggest carbon sink.",
+        answers:[{t:"Absorbs 30%+ of human CO₂",p:38},{t:"Phytoplankton convert CO₂ to organic matter",p:30},{t:"Dissolves CO₂ straight from the air",p:22},{t:"Covers most of Earth's surface",p:10}]},
+    ]
+  },
+  {
+    title:"Stores", color:"#a855f7",
+    desc:"Atmosphere and Soil slides",
+    questions:[
+      { q:"Name a greenhouse gas found in the atmosphere.",
+        answers:[{t:"Carbon dioxide (CO₂)",p:42},{t:"Methane",p:35},{t:"Water vapor",p:15},{t:"Nitrous oxide",p:8}]},
+      { q:"Name something that stores carbon in soil.",
+        answers:[{t:"Humus / Organic matter",p:38},{t:"Plant roots",p:28},{t:"Microbes / Bacteria / Fungi",p:22},{t:"Dead plant material",p:12}]},
+      { q:"Name a reason soil stores more carbon than forest branches above ground.",
+        answers:[{t:"Less oxygen slows decay underground",p:40},{t:"Roots lock carbon deep down",p:30},{t:"Humus is decay-resistant",p:20},{t:"Soil covers far more area",p:10}]},
+    ]
+  },
+  {
+    title:"Sources", color:"#ef4444",
+    desc:"Animals, Fossil Fuels, and Humans slides",
+    questions:[
+      { q:"Name something humans do that releases carbon into the air.",
+        answers:[{t:"Burn fossil fuels",p:38},{t:"Drive cars / Transportation",p:28},{t:"Cut down forests / Deforestation",p:18},{t:"Run factories / Industry",p:12},{t:"Fly in airplanes",p:4}]},
+      { q:"Name a fossil fuel.",
+        answers:[{t:"Coal",p:40},{t:"Oil / Petroleum",p:35},{t:"Natural gas",p:25}]},
+      { q:"Name an animal whose digestion releases greenhouse gases.",
+        answers:[{t:"Cows",p:52},{t:"Sheep",p:26},{t:"Pigs",p:14},{t:"Goats",p:8}]},
+    ]
+  },
+  {
+    title:"Artificial Solutions", color:"#f59e0b",
+    desc:"All the Artificial Cycle slides",
+    questions:[
+      { q:"Name a technology humans use to artificially capture carbon.",
+        answers:[{t:"Direct Air Capture (DAC)",p:36},{t:"Point-source capture at factories",p:32},{t:"Underground / geological storage",p:22},{t:"Oxy-fuel combustion",p:10}]},
+      { q:"Name a challenge with Direct Air Capture technology.",
+        answers:[{t:"Air is only ~0.04% CO₂",p:38},{t:"Very expensive",p:32},{t:"Uses a lot of energy",p:20},{t:"Hard to scale up",p:10}]},
+      { q:"Name something needed to safely store CO₂ underground.",
+        answers:[{t:"Porous rock layer",p:42},{t:"Cap rock / sealing layer on top",p:38},{t:"Deep location",p:20}]},
+    ]
+  },
+];
 
-// data[category][value] = {clue, answer, why, double}
-const DATA = {
-  "SUPER SINKS": {
-    100:{clue:"Waterlogged, muddy wetlands like bogs that store about 10× more carbon per area than ordinary land.", answer:"What is a peatland? (a wetland / bog)"},
-    200:{clue:"Salty coastal trees with tangled roots that capture roughly 4× more carbon than a normal forest.", answer:"What are mangroves?"},
-    300:{clue:"These coastal underwater meadows are about 40× better per area than forests at locking carbon.", answer:"What is seagrass? (a seagrass meadow)"},
-    400:{clue:"Soaking up over 30% of humanity’s CO₂ emissions, it’s Earth’s single biggest carbon sink.", answer:"What is the ocean?"},
-    500:{clue:"Tiny ocean drifters that act like sea-plants, turning dissolved CO₂ into organic matter.", answer:"What is plankton? (phytoplankton)"},
-    600:{clue:"Wetland mud stores carbon so well because it lacks THIS gas, which would let bacteria rot the plant matter.", answer:"What is oxygen?"},
-  },
-  "BIG STORES": {
-    100:{clue:"A tree locks carbon into its roots, its leaves, and this thick woody middle part.", answer:"What is the trunk?"},
-    200:{clue:"The biggest carbon store on land — this dark ground holds about 3× more carbon than the whole atmosphere.", answer:"What is soil?"},
-    300:{clue:"Cold northern ‘boreal’ forests keep most of their carbon HERE, not up in their branches.", answer:"What is underground? (in the soil)"},
-    400:{clue:"Unlike boreal forests, these warm jungles store more than half their carbon ABOVE ground.", answer:"What are tropical forests? (rainforests)"},
-    500:{clue:"Deep-tilling or exposing soil wakes up these tiny decomposers, which release stored carbon.", answer:"What are microbes? (bacteria and fungi)", why:"Extension note: slides cover microbes & soil as the largest store; the ‘tilling releases stored carbon’ link is an extension."},
-    600:{clue:"The dark, decay-resistant material left after matter breaks down, storing carbon in soil long-term.", answer:"What is humus?"},
-  },
-  "CARBON CATCHERS": {
-    100:{clue:"Filters bolted onto a factory’s smokestack that grab CO₂ from its concentrated exhaust.", answer:"What is point-source capture?"},
-    200:{clue:"This technology uses giant fans to pull CO₂ from open air — hard, since air is only ~0.04% CO₂.", answer:"What is Direct Air Capture? (DAC)"},
-    300:{clue:"To bury captured CO₂ underground safely, you need porous rock PLUS this sealing layer on top.", answer:"What is a cap (cap-rock) layer?"},
-    400:{clue:"Burning fuel in pure oxygen instead of plain air, which makes the CO₂ easier to capture.", answer:"What is oxy-fuel? (oxy-combustion)", double:true},
-    500:{clue:"In ‘pre-combustion’ capture, fossil fuel becomes mostly hydrogen plus this harmless substance.", answer:"What is water? (steam)"},
-    600:{clue:"After DAC’s special filters trap CO₂, they must be done THIS to release the gas for storage.", answer:"What is heated?"},
-  },
-  "USUAL SUSPECTS": {
-    100:{clue:"Coal, oil, and gas — burning them unleashes carbon that took millions of years to form.", answer:"What are fossil fuels?"},
-    200:{clue:"Bacteria in cows’ stomachs burp out this powerful greenhouse gas.", answer:"What is methane?"},
-    300:{clue:"The single LARGEST carbon source in the whole cycle — yes, it’s us.", answer:"What are humans? (human activity)"},
-    400:{clue:"Making cement and steel and shipping all our goods fall under this emissions-driving human activity.", answer:"What is industry? (manufacturing)"},
-    500:{clue:"Fossil fuels take 50–400 million years to form under this crushing combo deep underground.", answer:"What is pressure and heat?"},
-    600:{clue:"Burning wood is sold as ‘carbon-neutral,’ but it isn’t INSTANT because of this delay.", answer:"What is the time new trees take to regrow?", why:"Host note: the regrowth-lag idea isn’t stated outright on the Session 2 slides — worth a sentence aloud."},
-  },
-  "NAME THAT TERM": {
-    100:{clue:"A place or process that actively captures and removes CO₂ from the air.", answer:"What is a sink?"},
-    200:{clue:"A place or process that puts out more CO₂ than it captures.", answer:"What is a source?"},
-    300:{clue:"Any physical place where carbon is held — soil, oceans, forests, or fossil fuels.", answer:"What is a store? (storage)"},
-    400:{clue:"The fancy science word for permanently capturing and locking CO₂ away for good.", answer:"What is sequestration?"},
-    500:{clue:"The cycle’s ‘central hub,’ where greenhouse gases build up and carbon flows in and out.", answer:"What is the atmosphere?"},
-    600:{clue:"Carbon stored by coastal ecosystems like mangroves and seagrass has this colorful two-word name.", answer:"What is blue carbon?"},
-  },
-  "ON THE MOVE": {
-    100:{clue:"The process plants use to take in CO₂, water, and sunlight — making them a carbon sink.", answer:"What is photosynthesis?"},
-    200:{clue:"Animals and plants release CO₂ into the air through this process — basically breathing out.", answer:"What is respiration?"},
-    300:{clue:"When dead plants and animals rot, this process moves their carbon down into the soil.", answer:"What is decomposition?"},
-    400:{clue:"Humans dig and drill to pull fossil fuels out of the ground in this process.", answer:"What is extraction?"},
-    500:{clue:"Over ages, dead matter gets pressed deep underground in this process, slowly forming fossil fuels.", answer:"What is burial?", double:true},
-    600:{clue:"When the ocean takes CO₂ straight from the air and dissolves it into seawater, that’s this process.", answer:"What is absorption?"},
-  },
-};
+/* ============================================================
+   STATE
+   ============================================================ */
+let S = {};
 
-/* ============ STATE ============ */
-const used = {};            // "cat|val" -> true
-let current = null;         // {cat,val} or {final:true}
-let teams = [];             // {name, score}
-let teamSeq = 0;
-
-/* ============ BOARD RENDER ============ */
-const boardEl = document.getElementById('board');
-function buildBoard(){
-  boardEl.innerHTML='';
-  CATEGORIES.forEach(c=>{
-    const d=document.createElement('div');d.className='cat';d.textContent=c;boardEl.appendChild(d);
-  });
-  VALUES.forEach(v=>{
-    CATEGORIES.forEach(c=>{
-      const key=c+'|'+v;
-      const t=document.createElement('div');
-      t.className='tile'+(used[key]?' used':'');
-      t.dataset.key=key;
-      t.innerHTML='<span>'+v+'</span>';
-      t.onclick=()=>{ if(!used[key]) openClue(c,v); };
-      boardEl.appendChild(t);
-    });
-  });
+function initState(gIdx) {
+  S = { g:gIdx, q:0, revealed:new Set(), strikes:0, active:1, phase:'play', scores:[0,0] };
 }
 
-/* ============ CLUE MODAL ============ */
-const overlay=document.getElementById('overlay');
-const mCat=document.getElementById('mCat'), mVal=document.getElementById('mVal');
-const mClue=document.getElementById('mClue'), mAnswer=document.getElementById('mAnswer');
-const mA=document.getElementById('mA'), mWhy=document.getElementById('mWhy');
-const doubleBanner=document.getElementById('doubleBanner');
-const revealBtn=document.getElementById('revealBtn'), doneBtn=document.getElementById('doneBtn');
-
-/* ---- 60-second timer ---- */
-const TOTAL=60;
-const timerEl=document.getElementById('timer');
-const clockEl=document.getElementById('clock');
-const timerBar=document.getElementById('timerBar');
-const pauseBtn=document.getElementById('pauseBtn');
-let remaining=TOTAL, ticker=null, paused=false;
-
-function fmt(s){ return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
-function paintTimer(){
-  clockEl.textContent=fmt(remaining);
-  timerBar.style.width=(remaining/TOTAL*100)+'%';
-  timerEl.classList.toggle('warn', remaining<=20 && remaining>10);
-  timerEl.classList.toggle('danger', remaining<=10 && remaining>0);
-  timerEl.classList.toggle('done', remaining<=0);
-}
-function stopTimer(){ if(ticker){clearInterval(ticker);ticker=null;} }
-function startTimer(){
-  stopTimer(); remaining=TOTAL; paused=false; pauseBtn.textContent='Pause';
-  paintTimer();
-  ticker=setInterval(()=>{
-    if(paused) return;
-    remaining--;
-    if(remaining<=0){ remaining=0; paintTimer(); stopTimer(); clockEl.textContent="TIME!"; return; }
-    paintTimer();
-  },1000);
-}
-pauseBtn.onclick=()=>{
-  if(remaining<=0) return;
-  paused=!paused; pauseBtn.textContent=paused?'Resume':'Pause';
-};
-document.getElementById('restartBtn').onclick=startTimer;
-
-function openClue(cat,val){
-  const item=DATA[cat][val];
-  current={cat,val};
-  mCat.textContent=cat;
-  mVal.textContent=val+' pts';
-  mClue.textContent=item.clue;
-  mA.textContent='→ '+item.answer;
-  mWhy.innerHTML=item.why||'';
-  mWhy.style.display=item.why?'block':'none';
-  mAnswer.classList.remove('show');
-  doubleBanner.classList.remove('show');
-  revealBtn.style.display='';
-  revealBtn.textContent='Reveal Answer';
-  doneBtn.textContent='Mark Played & Close';
-  overlay.classList.add('show');
-  startTimer();
-}
-
-revealBtn.onclick=()=>{
-  mAnswer.classList.add('show');
-  if(current && DATA[current.cat][current.val].double){
-    doubleBanner.classList.add('show');
-  }
-  revealBtn.style.display='none';
-};
-
-function closeModal(markUsed){
-  stopTimer();
-  if(markUsed && current){
-    used[current.cat+'|'+current.val]=true;
-    const t=boardEl.querySelector('[data-key="'+current.cat+'|'+current.val+'"]');
-    if(t){t.classList.add('used');}
-  }
-  overlay.classList.remove('show');
-  current=null;
-}
-doneBtn.onclick=()=>closeModal(true);
-document.getElementById('closeX').onclick=()=>closeModal(false);
-overlay.onclick=(e)=>{ if(e.target===overlay) closeModal(false); };
-document.addEventListener('keydown',(e)=>{
-  if(!overlay.classList.contains('show')) return;
-  if(e.key==='Escape') closeModal(false);
-  if(e.key===' '||e.key==='Enter'){ if(revealBtn.style.display!=='none'){e.preventDefault();revealBtn.click();} }
+/* ============================================================
+   MENU
+   ============================================================ */
+GAMES.forEach((g, i) => {
+  const el = document.createElement('div');
+  el.className = 'game-card';
+  el.style.setProperty('--c', g.color);
+  el.innerHTML = `<div class="gnum">Game ${i+1}</div><h2>${g.title}</h2><p>${g.desc}</p><div class="qcount">${g.questions.length} questions</div>`;
+  el.onclick = () => startGame(i);
+  document.getElementById('gameGrid').appendChild(el);
 });
 
-/* ============ SCOREBOARD ============ */
-const teamsEl=document.getElementById('teams');
-const emptyNote=document.getElementById('emptyNote');
-function renderTeams(){
-  teamsEl.innerHTML='';
-  emptyNote.style.display=teams.length?'none':'block';
-  teams.forEach(team=>{
-    const el=document.createElement('div');el.className='team';
-    el.innerHTML=`
-      <div class="tname" contenteditable="true" spellcheck="false">${team.name}</div>
-      <div class="tscore">${team.score.toLocaleString()}</div>
-      <div class="row">
-        <input type="number" placeholder="+ / − pts" />
-        <button class="mini addpts">Add</button>
-      </div>
-      <div class="row">
-        <button class="del" style="width:100%">Remove</button>
-      </div>`;
-    const nameEl=el.querySelector('.tname');
-    nameEl.onblur=()=>{ team.name=nameEl.textContent.trim()||'Council'; };
-    const input=el.querySelector('input');
-    const add=()=>{ const n=parseInt(input.value,10); if(!isNaN(n)){ team.score+=n; input.value=''; renderTeams(); } };
-    el.querySelector('.addpts').onclick=add;
-    input.onkeydown=(e)=>{ if(e.key==='Enter') add(); };
-    el.querySelector('.del').onclick=()=>{ teams=teams.filter(t=>t!==team); renderTeams(); };
-    teamsEl.appendChild(el);
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ============================================================
+   GAME START / ROUND RENDER
+   ============================================================ */
+function startGame(idx) {
+  initState(idx);
+  document.getElementById('hdrTitle').textContent = GAMES[idx].title;
+  showScreen('gameScreen');
+  renderRound();
+}
+
+function renderRound() {
+  const g = GAMES[S.g], q = g.questions[S.q];
+  S.revealed = new Set(); S.strikes = 0; S.phase = 'play';
+  document.getElementById('hdrRound').textContent = `Round ${S.q+1} of ${g.questions.length}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('phaseBanner').classList.remove('show');
+
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  q.answers.forEach((a, i) => {
+    const tw = document.createElement('div');
+    tw.className = 'tw'; tw.dataset.i = i;
+    tw.innerHTML = `<div class="ti">
+      <div class="tf">${i+1}</div>
+      <div class="tb"><div class="atxt">${a.t}</div><div class="apts">${a.p}</div></div>
+    </div>`;
+    tw.querySelector('.tf').onclick = () => reveal(i);
+    board.appendChild(tw);
+  });
+
+  updateStrikes(); updatePanels(); updateControls();
+}
+
+/* ============================================================
+   CORE ACTIONS
+   ============================================================ */
+function reveal(idx) {
+  if (S.revealed.has(idx) || S.phase === 'done') return;
+  S.revealed.add(idx);
+  document.querySelector(`.tw[data-i="${idx}"]`).classList.add('revealed');
+  updatePanels();
+  const q = GAMES[S.g].questions[S.q];
+  if (S.revealed.size === q.answers.length) endRound(S.active);
+  updateControls();
+}
+
+function revealAll() {
+  const q = GAMES[S.g].questions[S.q];
+  q.answers.forEach((_, i) => {
+    if (!S.revealed.has(i)) { S.revealed.add(i); document.querySelector(`.tw[data-i="${i}"]`).classList.add('revealed'); }
+  });
+  updatePanels();
+}
+
+function addStrike() {
+  if (S.phase !== 'play' || S.strikes >= 3) return;
+  S.strikes++;
+  updateStrikes();
+  if (S.strikes >= 3) {
+    S.phase = 'steal';
+    S.active = S.active === 1 ? 2 : 1;
+    const b = document.getElementById('phaseBanner');
+    b.textContent = `★ STEAL — ${teamName(S.active)} gets ONE guess!`;
+    b.classList.add('show');
+    updatePanels(); updateControls();
+  }
+}
+
+function endRound(winner) {
+  S.phase = 'done';
+  revealAll();
+  const total = GAMES[S.g].questions[S.q].answers.reduce((s,a) => s+a.p, 0);
+  S.scores[winner-1] += total;
+  updatePanels(); updateControls();
+
+  document.getElementById('roTitle').textContent = `${teamName(winner)} wins the round!`;
+  document.getElementById('roSub').textContent = `+${total} points awarded.`;
+  renderScoreSummary('roScores');
+  const last = S.q >= GAMES[S.g].questions.length - 1;
+  document.getElementById('btnRoNext').textContent = last ? 'See Final Scores' : 'Next Question →';
+  document.getElementById('roOverlay').classList.add('show');
+}
+
+function nextQuestion() {
+  document.getElementById('roOverlay').classList.remove('show');
+  S.q++;
+  if (S.q >= GAMES[S.g].questions.length) { showGameOver(); return; }
+  S.active = S.active === 1 ? 2 : 1;
+  renderRound();
+}
+
+function showGameOver() {
+  const [s1,s2] = S.scores;
+  document.getElementById('goSub').textContent = s1>s2 ? `🏆 ${teamName(1)} wins!` : s2>s1 ? `🏆 ${teamName(2)} wins!` : "It's a tie!";
+  renderScoreSummary('goScores');
+  document.getElementById('goOverlay').classList.add('show');
+}
+
+/* ============================================================
+   UI HELPERS
+   ============================================================ */
+function updateStrikes() {
+  for (let i=0;i<3;i++){
+    const el=document.getElementById('sm'+i);
+    const hit=i<S.strikes;
+    el.classList.toggle('hit',hit);
+    el.textContent=hit?'✗':'';
+  }
+}
+
+function updatePanels() {
+  [1,2].forEach(t => {
+    const p=document.getElementById('tp'+t);
+    p.classList.remove('t-active','t-steal');
+    if(S.phase==='play'&&S.active===t) p.classList.add('t-active');
+    if(S.phase==='steal'&&S.active===t) p.classList.add('t-steal');
+    document.getElementById('ts'+t).textContent=S.scores[t-1].toLocaleString();
+    const q=GAMES[S.g].questions[S.q];
+    const rp=S.active===t ? [...S.revealed].reduce((s,i)=>s+q.answers[i].p,0) : 0;
+    document.getElementById('tr'+t).textContent=`+${rp} this round`;
   });
 }
-document.getElementById('addTeam').onclick=()=>{
-  teamSeq++; teams.push({name:'City Council '+teamSeq, score:0}); renderTeams();
+
+function updateControls() {
+  const show=(id,v)=>{document.getElementById(id).style.display=v?'':'none';};
+  show('btnWrong',     S.phase==='play');
+  show('btnStealRight',S.phase==='steal');
+  show('btnStealWrong',S.phase==='steal');
+  show('btnReveal',    S.phase!=='done');
+  show('btnNext',      S.phase==='done');
+}
+
+function renderScoreSummary(cid) {
+  document.getElementById(cid).innerHTML=[0,1].map(i=>{
+    const win=S.scores[i]>S.scores[1-i];
+    return `<div class="ss${win?' winner':''}"><div class="ssn">${teamName(i+1)}</div><div class="ssp">${S.scores[i].toLocaleString()}</div></div>`;
+  }).join('');
+}
+
+function teamName(t){ return document.getElementById('tn'+t).textContent.trim()||`Team ${t}`; }
+
+/* ============================================================
+   BUTTON WIRING
+   ============================================================ */
+document.getElementById('btnWrong').onclick = addStrike;
+
+document.getElementById('btnStealRight').onclick = () => {
+  revealAll();
+  endRound(S.active);
 };
 
-/* ============ CONTROLS ============ */
-document.getElementById('resetBtn').onclick=()=>{
-  if(confirm('Reset the board (mark every square unplayed)? Scores are kept.')){
-    for(const k in used) delete used[k];
-    buildBoard();
-  }
+document.getElementById('btnStealWrong').onclick = () => {
+  const original = S.active===1 ? 2 : 1;
+  revealAll();
+  endRound(original);
 };
 
-/* ============ INIT ============ */
-buildBoard();
-renderTeams();
+document.getElementById('btnReveal').onclick = () => {
+  revealAll();
+  endRound(S.active);
+};
+
+document.getElementById('btnNext').onclick = nextQuestion;
+document.getElementById('btnRoNext').onclick = nextQuestion;
+document.getElementById('btnRoMenu').onclick = () => { document.getElementById('roOverlay').classList.remove('show'); showScreen('menuScreen'); };
+document.getElementById('btnGoMenu').onclick = () => { document.getElementById('goOverlay').classList.remove('show'); showScreen('menuScreen'); };
+document.getElementById('backBtn').onclick = () => { if(confirm('Go back to the menu? Scores will be lost.')) showScreen('menuScreen'); };
+
+updateControls();
 </script>
 </body>
 </html>
