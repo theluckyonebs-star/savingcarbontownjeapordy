@@ -122,23 +122,16 @@
   .hk-row:last-child{border:none;}
   .hk-row.found{opacity:.38;text-decoration:line-through;}
   .hk-ans-wrap{flex:1;display:flex;flex-direction:column;gap:1px;}
-  .hk-ans{color:#c7e3ff;font-weight:700;}
-  .hk-desc{font-size:11px;color:var(--muted);font-weight:400;}
+  .hk-ans{color:#c7e3ff;font-weight:700;filter:blur(4px);transition:filter .15s;}
+  .hk-desc{font-size:11px;color:var(--muted);font-weight:400;filter:blur(3px);transition:filter .15s;}
+  .hk-row:hover .hk-ans,.hk-row:hover .hk-desc{filter:none;}
+  .hk-row.found .hk-ans,.hk-row.found .hk-desc{filter:none;}
   .hk-pts{color:var(--gold);font-weight:900;min-width:28px;text-align:right;font-size:15px;}
   .hk-num{color:var(--muted);font-weight:800;min-width:18px;padding-top:1px;}
   .hk-accept{background:#1a4a2e;color:#4ade80;border:1px solid #4ade80;border-radius:4px;padding:2px 7px;font-size:11px;cursor:pointer;font-weight:800;flex-shrink:0;line-height:1.4;}
   .hk-accept:hover{background:#4ade80;color:#0a1628;}
   .hk-row.found .hk-accept{display:none;}
 
-  /* ── SLIDE NOTES ── */
-  .slide-notes{background:#1a0d00;border:1px solid #7c3a0a;border-radius:12px;overflow:hidden;}
-  .sn-toggle{width:100%;background:transparent;border:none;color:#f59e0b;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;}
-  .sn-toggle:hover{background:#200f00;}
-  .sn-body{display:none;padding:10px 14px 12px;border-top:1px solid #7c3a0a;}
-  .sn-body.open{display:block;}
-  .sn-body ul{padding-left:16px;display:flex;flex-direction:column;gap:6px;}
-  .sn-body li{font-size:12px;color:#fcd34d;line-height:1.5;}
-  .sn-body li strong{color:#fef3c7;}
 
   /* ── CONTROLS ── */
   .ctrl{background:#06192b;border-top:1px solid var(--line);padding:10px 16px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;position:sticky;bottom:0;}
@@ -242,12 +235,6 @@
         <div class="hk-body" id="hkBody"></div>
       </div>
 
-      <div class="slide-notes" id="slideNotesWrap" style="display:none">
-        <button class="sn-toggle" id="snToggle">
-          <span>⚠️ Slide Coverage Notes</span><span id="snArrow">▼</span>
-        </button>
-        <div class="sn-body" id="snBody"></div>
-      </div>
     </div>
 
     <!-- Team 2 -->
@@ -605,8 +592,6 @@ function renderRound() {
 
   // Host key
   buildHostKey();
-  // Slide notes
-  buildSlideNotes();
 
   updateStrikes(); updatePanels(); updateInputLabel();
   document.getElementById('answerInput').focus();
@@ -813,30 +798,10 @@ function manualAccept(idx) {
 }
 
 /* ═══════════════════════════════════════════
-   SLIDE NOTES
-   ═══════════════════════════════════════════ */
-function buildSlideNotes() {
-  const g = GAMES[S.g];
-  const qLabel = `Q${S.q+1}`;
-  // Show notes relevant to this game (global) or this specific question
-  const relevant = g.notes.filter(n => !n.q || n.q === qLabel);
-  const wrap = document.getElementById('slideNotesWrap');
-  const body = document.getElementById('snBody');
-  if (!relevant.length) { wrap.style.display='none'; return; }
-  wrap.style.display = '';
-  body.innerHTML = `<ul>${relevant.map(n=>`<li>${n.q?`<strong>[${n.q}]</strong> `:''} ${n.txt}</li>`).join('')}</ul>`;
-}
-
-/* ═══════════════════════════════════════════
    COLLAPSIBLE TOGGLES
    ═══════════════════════════════════════════ */
 document.getElementById('hkToggle').onclick = () => {
   const body=document.getElementById('hkBody'), arrow=document.getElementById('hkArrow');
-  const open=body.classList.toggle('open');
-  arrow.textContent=open?'▲':'▼';
-};
-document.getElementById('snToggle').onclick = () => {
-  const body=document.getElementById('snBody'), arrow=document.getElementById('snArrow');
   const open=body.classList.toggle('open');
   arrow.textContent=open?'▲':'▼';
 };
