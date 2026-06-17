@@ -291,183 +291,181 @@
 
 <script>
 /* ═══════════════════════════════════════════
-   GAME DATA
-   Points are grounded in real data — the host
-   key shows exactly what each number means.
+   GAME DATA  ·  All content drawn directly
+   from the specified slide numbers.
+   Point values reflect real-world proportions,
+   compressed so every answer is worth 10–45 pts.
    ═══════════════════════════════════════════ */
 const GAMES = [
+  /* ── GAME 1 · Slides 6–7 ── */
   {
-    title:"Overview & Storage", color:"#22d3a8",
-    desc:"Overview and Storage slides",
+    title:"Atmosphere & Ocean", color:"#22d3a8",
+    desc:"Slides 6–7",
     notes:[
-      {q:null, txt:"Ensure slides explicitly list all 5 main carbon stores: <strong>soil, ocean, trees/forests, atmosphere, fossil fuels</strong>."},
-      {q:null, txt:"Ensure slides name all 4 carbon cycle steps: <strong>photosynthesis, decomposition, respiration, absorption</strong>."},
-      {q:"Q2",  txt:"<strong>'Absorption'</strong> as a named cycle step may not be on slides — add it if missing."},
-      {q:"Q3",  txt:"<strong>Wetlands/bogs</strong> as carbon stores are covered in the Sinks unit — worth a brief mention in Storage too."},
+      {q:null, txt:"All questions draw only from <strong>Slide 6 (Atmosphere)</strong> and <strong>Slide 7 (Ocean)</strong>."},
+      {q:"Q1", txt:"Slide 6 names CO₂, methane, and water vapor as greenhouse gases. <strong>Nitrous oxide</strong> is not mentioned — omit it during play."},
+      {q:"Q3", txt:"Slide 6 says plants and oceans remove CO₂ from the atmosphere. If you want a deeper dive, Slide 7 explains the ocean's mechanism."},
     ],
     questions:[
-      { q:"Name somewhere on Earth where carbon is stored.",
-        metric:"Points = % of Earth's total active carbon (~44,000 Gt C)",
+      { q:"Name a greenhouse gas stored in the atmosphere.",
+        metric:"Points = relative emphasis in slide content (CO₂ is the main focus, methane and water vapor also named)",
         answers:[
-          {t:"Ocean / Sea",       p:86, d:"~38,000 Gt C = 86% of all active carbon"},
-          {t:"Fossil Fuels",      p: 9, d:"~4,000 Gt C  = 9%"},
-          {t:"Soil / Underground",p: 3, d:"~1,500 Gt C  = 3%"},
-          {t:"Atmosphere",        p: 2, d:"~860 Gt C    = 2%"},
-          {t:"Trees / Forests",   p: 1, d:"~550 Gt C    = 1%"},
+          {t:"Carbon dioxide / CO2", p:45, d:"Slide 6 — named first; the primary greenhouse gas driving warming"},
+          {t:"Methane",              p:35, d:"Slide 6 — explicitly listed alongside CO₂ as a key greenhouse gas"},
+          {t:"Water vapor",          p:20, d:"Slide 6 — listed as the third greenhouse gas in the atmosphere"},
         ]},
-      { q:"Name a step in the carbon cycle.",
-        metric:"Points = annual gross carbon flux (Gt C/yr), normalised to 100",
+      { q:"Name a way the ocean absorbs or stores carbon.",
+        metric:"Points = importance of each mechanism as presented on Slide 7",
         answers:[
-          {t:"Photosynthesis",          p:40, d:"moves ~120 Gt C/yr out of the atmosphere"},
-          {t:"Ocean Absorption",        p:30, d:"gross ocean–atmosphere exchange ~90 Gt C/yr"},
-          {t:"Respiration / Breathing", p:20, d:"all organisms release ~60 Gt C/yr"},
-          {t:"Decomposition",           p:10, d:"dead matter releases ~30 Gt C/yr"},
+          {t:"Phytoplankton use dissolved carbon as food / Phytoplankton", p:40, d:"Slide 7 — phytoplankton use dissolved carbon; primary biological pump"},
+          {t:"Carbon from the air dissolves into ocean water",             p:35, d:"Slide 7 — atmospheric carbon dissolves directly into the ocean"},
+          {t:"Seafloor and kelp store carbon for thousands of years",      p:25, d:"Slide 7 — long-term storage in seafloor sediments and kelp forests"},
         ]},
-      { q:"Name something that makes a good long-term carbon store.",
-        metric:"Points = storage quality (size × stability), ocean=50 baseline",
+      { q:"Name a role the atmosphere plays in the carbon cycle.",
+        metric:"Points = how prominently each role is described on Slide 6",
         answers:[
-          {t:"Ocean",        p:50, d:"38,000 Gt C locked in stable deep-ocean layers"},
-          {t:"Soil",         p:25, d:"1,500+ Gt C; centuries-long residence time"},
-          {t:"Wetland / Bog",p:15, d:"peat preserves carbon for thousands of years; 10× density of ordinary land"},
-          {t:"Forest / Trees",p: 8, d:"~550 Gt C; decades–centuries before it releases"},
-          {t:"Atmosphere",   p: 2, d:"860 Gt C but NOT a good store — this is where we need less carbon"},
+          {t:"Stores greenhouse gases like CO2 and methane",   p:40, d:"Slide 6 — the atmosphere IS the store for greenhouse gases"},
+          {t:"Acts as the central hub of the carbon cycle",    p:35, d:"Slide 6 — described as the 'central hub' all carbon passes through"},
+          {t:"First stop for all human carbon emissions",      p:25, d:"Slide 6 — human emissions enter the atmosphere before anywhere else"},
         ]},
     ]
   },
-  {
-    title:"Sinks", color:"#3b82f6",
-    desc:"Ocean / Blue Carbon, Forests / Wetlands slides",
-    notes:[
-      {q:null, txt:"Ensure slides cover ocean, forests, wetlands, mangroves, and seagrass as distinct sinks."},
-      {q:"Q2",  txt:"<strong>Salt marshes</strong> as a blue carbon ecosystem may not be explicitly named on slides — add it."},
-      {q:"Q3",  txt:"The <strong>26% CO₂ absorption stat</strong> and <strong>phytoplankton's role</strong> should appear on slides. Add if missing."},
-    ],
-    questions:[
-      { q:"Name a natural carbon sink.",
-        metric:"Points = % of total annual natural carbon sequestration (~5 Gt C/yr)",
-        answers:[
-          {t:"Ocean",               p:50, d:"absorbs ~2.5 Gt C/yr = 50% of all natural sinks"},
-          {t:"Forest",              p:40, d:"land forests absorb ~2.0 Gt C/yr = 40%"},
-          {t:"Wetland / Peatland",  p: 7, d:"~0.37 Gt C/yr = 7%"},
-          {t:"Mangroves",           p: 2, d:"~0.02–0.05 Gt C/yr = 2% (but very high per hectare!)"},
-          {t:"Seagrass",            p: 1, d:"~0.02 Gt C/yr = 1% (but highest per-hectare efficiency of all)"},
-        ]},
-      { q:"Name a type of 'blue carbon' ecosystem.",
-        metric:"Points = carbon sequestration efficiency vs typical land (1× = ordinary land)",
-        answers:[
-          {t:"Seagrass meadows",p:40, d:"locks carbon 40× faster per hectare than typical land (per curriculum)"},
-          {t:"Salt marshes",    p: 8, d:"stores ~8× more carbon per hectare than ordinary land"},
-          {t:"Mangroves",       p: 4, d:"captures 4× more carbon per hectare than a normal forest (per curriculum)"},
-        ]},
-      { q:"Name a reason the ocean is Earth's biggest carbon sink.",
-        metric:"Points = annual Gt C contribution of each mechanism",
-        answers:[
-          {t:"Phytoplankton convert CO₂ to organic matter",p:40, d:"biological pump exports ~10 Gt C/yr to the deep ocean"},
-          {t:"Absorbs ~26% of all human CO₂ emissions",    p:30, d:"net anthropogenic uptake ~2.5 Gt C/yr (26% of human total)"},
-          {t:"Dissolves CO₂ directly from the air",        p:25, d:"physical solubility pump; CO2 dissolves into cold surface water"},
-          {t:"Covers 71% of Earth's surface",              p: 5, d:"sheer area means even modest per-m² uptake adds up enormously"},
-        ]},
-    ]
-  },
+
+  /* ── GAME 2 · Slides 8–10 ── */
   {
     title:"Stores", color:"#a855f7",
-    desc:"Atmosphere and Soil slides",
+    desc:"Slides 8–10",
     notes:[
-      {q:"Q2", txt:"<strong>Humus</strong> as a soil carbon form should be named on slides — add if missing."},
-      {q:"Q3", txt:"The explanation that <strong>less oxygen underground slows decay</strong> (why soil stores more than branches) should be on slides."},
-      {q:"Q3", txt:"<strong>Humus being decay-resistant</strong> is a specific detail — verify it's on slides or omit this answer from play."},
+      {q:null, txt:"All questions draw only from <strong>Slide 8 (Soil)</strong>, <strong>Slide 9 (Blue Carbon)</strong>, and <strong>Slide 10 (Forests)</strong>."},
+      {q:"Q2", txt:"Slide 9 names mangroves, tidal marshes, and seagrass meadows. <strong>Salt marshes</strong> (a broader category) are not explicitly named — stick to the slide terms during play."},
+      {q:"Q3", txt:"Slide 10 lists roots, leaves, and trunk as carbon storage locations, plus soil sequestration via roots. All four answers come directly from that slide."},
     ],
     questions:[
-      { q:"Name a greenhouse gas found in the atmosphere.",
-        metric:"Points = % of total human-caused radiative forcing (IPCC AR6)",
+      { q:"Name a reason soil is the planet's largest carbon store.",
+        metric:"Points = emphasis of each point on Slide 8 (largest store bullet = top priority)",
         answers:[
-          {t:"Carbon dioxide / CO2",p:66, d:"responsible for ~66% of current human-caused warming"},
-          {t:"Methane",             p:17, d:"~17% of forcing; 80× more potent than CO₂ over 20 years"},
-          {t:"Water vapor",         p:10, d:"amplifies warming as a feedback; ~10% of forcing humans influence"},
-          {t:"Nitrous oxide",       p: 7, d:"~7% of forcing; 270× more potent than CO₂ over 100 years"},
+          {t:"Soil stores more carbon than the atmosphere and all plants combined", p:45, d:"Slide 8 — the headline fact; soil holds ~2,500 Gt C vs atmosphere's ~860 Gt C"},
+          {t:"Carbon stays locked in soil for thousands of years",                  p:35, d:"Slide 8 — long residence time makes soil a stable long-term store"},
+          {t:"Bacteria and fungi convert dead organic matter into stable soil carbon", p:20, d:"Slide 8 — microbial decomposition is how dead matter becomes stored soil carbon"},
         ]},
-      { q:"Name something that stores carbon in soil.",
-        metric:"Points = % of total soil carbon stock each form holds",
+      { q:"Name a type of blue carbon ecosystem.",
+        metric:"Points = order and emphasis on Slide 9 (mangroves listed first)",
         answers:[
-          {t:"Humus / Organic matter",       p:55, d:"humus makes up ~55% of soil carbon stock — stable for centuries"},
-          {t:"Dead plant material / Litter",  p:25, d:"fresh litter and partially decomposed matter = ~25% of stock"},
-          {t:"Plant roots",                   p:12, d:"living roots and root exudates = ~12% of stock"},
-          {t:"Microbes / Bacteria / Fungi",   p: 8, d:"microbial biomass = ~8% but processes ALL the carbon above it"},
+          {t:"Mangroves",          p:42, d:"Slide 9 — listed first; dense leaf and branch systems trap and hold carbon"},
+          {t:"Tidal marshes",      p:35, d:"Slide 9 — muddy anaerobic soil stores large amounts of carbon"},
+          {t:"Seagrass meadows",   p:23, d:"Slide 9 — prevent water currents from disturbing and releasing stored soil carbon"},
         ]},
-      { q:"Name a reason soil stores more carbon than tree branches above ground.",
-        metric:"Points = relative importance of each mechanism (expert consensus)",
+      { q:"Name a place in or around a tree where carbon is stored.",
+        metric:"Points = scale of carbon storage at each location, per Slide 10",
         answers:[
-          {t:"Less oxygen underground slows decomposition",p:45, d:"anaerobic conditions cut decay rates by 10–100×"},
-          {t:"Roots physically move carbon deep underground",p:30, d:"~30% of photosynthesised carbon is pushed below ground via roots"},
-          {t:"Humus molecules are chemically decay-resistant",p:18, d:"humus bonds resist microbial breakdown for hundreds of years"},
-          {t:"Soil has far greater total area than branches",p: 7, d:"topsoil alone covers the entire land surface, branches do not"},
+          {t:"Trunk / Wood",          p:35, d:"Slide 10 — trunk holds the largest visible mass of stored carbon in a tree"},
+          {t:"Roots",                 p:30, d:"Slide 10 — roots store carbon and actively transfer it into the ground"},
+          {t:"Soil around the tree",  p:25, d:"Slide 10 — carbon sequestration: roots push carbon deep into the ground"},
+          {t:"Leaves",                p:10, d:"Slide 10 — leaves capture CO₂ during photosynthesis; smaller temporary store"},
         ]},
     ]
   },
+
+  /* ── GAME 3 · Slides 11–13 ── */
+  {
+    title:"Sinks", color:"#3b82f6",
+    desc:"Slides 11–13",
+    notes:[
+      {q:null, txt:"All questions draw only from <strong>Slide 11 (Wetlands)</strong>, <strong>Slide 12 (Animals)</strong>, and <strong>Slide 13 (Fossil Fuels)</strong>."},
+      {q:"Q2", txt:"Slide 12 names cows specifically for methane. <strong>Sheep, pigs, and goats</strong> are not named on the slide — skip them during play or add them to the slide first."},
+      {q:"Q2", txt:"Slide 12 lists four roles for animals: respiration, consumption, methane production, decomposition. All four are valid answers — make sure slide covers each clearly."},
+    ],
+    questions:[
+      { q:"Name a reason wetlands are able to store so much carbon.",
+        metric:"Points = emphasis of each mechanism on Slide 11",
+        answers:[
+          {t:"Waterlogged soil prevents bacteria from breaking down organic matter", p:40, d:"Slide 11 — saturated conditions = low oxygen = decomposition nearly stops"},
+          {t:"Peat builds up from thousands of years of undecomposed plants",       p:35, d:"Slide 11 — peatlands accumulate undecomposed organic matter over millennia"},
+          {t:"Marsh plants like reeds and sedges trap carbon in large root systems", p:25, d:"Slide 11 — marsh super-plants pull large amounts of carbon underground"},
+        ]},
+      { q:"Name a way animals affect the carbon cycle.",
+        metric:"Points = relative carbon impact of each role, per Slide 12",
+        answers:[
+          {t:"Exhale CO2 through breathing / Respiration",          p:40, d:"Slide 12 — respiration releases CO₂ directly into the atmosphere"},
+          {t:"Cows produce methane from gut bacteria / Cow methane", p:30, d:"Slide 12 — livestock gut bacteria produce methane, a potent greenhouse gas"},
+          {t:"Eat plants and consume the carbon stored in them",     p:20, d:"Slide 12 — consumption transfers plant carbon into the animal carbon store"},
+          {t:"Dead animals decompose and move carbon into the soil", p:10, d:"Slide 12 — decomposition returns animal carbon to the soil store"},
+        ]},
+      { q:"Name a fact about fossil fuels in the carbon cycle.",
+        metric:"Points = how prominently each fact appears on Slide 13",
+        answers:[
+          {t:"Fossil fuels formed from buried plants and animals under heat and pressure", p:45, d:"Slide 13 — Pressure & Heat section; buried organic matter compressed over time"},
+          {t:"It takes millions of years for fossil fuels to form",                        p:35, d:"Slide 13 — Scarcity section; millions of years = not a renewable resource"},
+          {t:"Burning fossil fuels releases all that stored carbon as CO2",                p:20, d:"Slide 13 — Disruption section; human use breaks open ancient carbon stores"},
+        ]},
+    ]
+  },
+
+  /* ── GAME 4 · Slides 14–16 ── */
   {
     title:"Sources", color:"#ef4444",
-    desc:"Animals, Fossil Fuels, and Humans slides",
+    desc:"Slides 14–16",
     notes:[
-      {q:"Q3", txt:"Slides likely name <strong>cows</strong> for methane — <strong>sheep, pigs, goats</strong> may not be mentioned. Add them or drop them from play."},
+      {q:null, txt:"Questions 1–2 draw from <strong>Slide 14 (Humans)</strong>. Question 3 draws from <strong>Slide 16 (Point-Source Capture)</strong>. Slide 15 is a title slide with no content."},
+      {q:"Q3", txt:"Slide 16 lists liquid solvents, oxy-fuel, membrane filters, and pre-combustion gasification. <strong>Confirm all four methods are explained on the slide</strong> before using this question."},
+      {q:"Q3", txt:"Slide 16 states point-source capture can capture <strong>up to 30%</strong> of a factory's emissions — a useful stat to add to the slide if not already there."},
     ],
     questions:[
-      { q:"Name something humans do that releases carbon into the air.",
-        metric:"Points = % of global annual CO₂ emissions by activity (IEA 2022, ~37 Gt CO₂/yr total)",
+      { q:"Name a way humans release carbon into the atmosphere.",
+        metric:"Points = relative scale of each emission source, per Slide 14",
         answers:[
-          {t:"Burn fossil fuels / Energy",      p:34, d:"power generation & heating = 34% of global CO₂"},
-          {t:"Run factories / Industry",         p:25, d:"cement, steel, chemicals = 25% of global CO₂"},
-          {t:"Drive cars / Transportation",      p:16, d:"road transport = 16% of global CO₂"},
-          {t:"Cut down forests / Deforestation", p:14, d:"land-use change = 14% of global CO₂"},
-          {t:"Fly in airplanes",                 p: 3, d:"aviation = ~2.5% of global CO₂ (but 3.5% of effective warming)"},
+          {t:"Burning fossil fuels",           p:45, d:"Slide 14 — Accelerated Release; burning is the core driver of human emissions"},
+          {t:"Running factories / Production",  p:30, d:"Slide 14 — Industry and Transport; production facilities emit large amounts"},
+          {t:"Shipping goods / Transportation", p:25, d:"Slide 14 — Industry and Transport; shipping is listed alongside factories"},
         ]},
-      { q:"Name a fossil fuel.",
-        metric:"Points = % of global CO₂ emitted by each fuel type",
+      { q:"Name something human carbon emissions disrupt or harm.",
+        metric:"Points = emphasis in Slide 14 (both consequences are named explicitly)",
         answers:[
-          {t:"Coal",        p:42, d:"coal burning = 42% of fossil-fuel CO₂ — the dirtiest fuel"},
-          {t:"Oil / Petroleum",p:33, d:"oil = 33% of fossil-fuel CO₂"},
-          {t:"Natural gas",  p:25, d:"natural gas = 25% of fossil-fuel CO₂ (cleanest of the three)"},
+          {t:"The ocean's ability to store carbon / Ocean chemistry",            p:50, d:"Slide 14 — Ocean Chemistry section; emissions weaken the ocean as a carbon sink"},
+          {t:"Nature's ability to absorb carbon fast enough / Absorption rate",  p:50, d:"Slide 14 — Accelerated Release; humans emit faster than nature can take back in"},
         ]},
-      { q:"Name an animal whose digestion releases greenhouse gases.",
-        metric:"Points = % of global livestock methane from enteric fermentation (FAO data)",
+      { q:"Name a method used to capture carbon at its industrial source.",
+        metric:"Points = order and emphasis on Slide 16 (separation listed first)",
         answers:[
-          {t:"Cows",  p:65, d:"cattle = 65% of all livestock methane from digestion"},
-          {t:"Sheep", p:15, d:"sheep = 15% of livestock methane"},
-          {t:"Goats", p:12, d:"goats = ~12% of livestock methane"},
-          {t:"Pigs",  p: 8, d:"pigs = ~8% (mostly from manure, not digestion — they don't ruminate)"},
+          {t:"Liquid solvents that separate CO2 from exhaust / Solvents", p:35, d:"Slide 16 — Separation method; liquid solvents bind to CO₂ in exhaust fumes"},
+          {t:"Oxy-fuel combustion / Oxy-fuel",                            p:30, d:"Slide 16 — burning in pure oxygen makes the exhaust gas mostly CO₂, easier to capture"},
+          {t:"Membrane filters that catch CO2 after burning / Membranes", p:25, d:"Slide 16 — Filtering method; post-combustion membranes isolate CO₂"},
+          {t:"Pre-combustion gasification / Pre-combustion",              p:10, d:"Slide 16 — fuel is gasified so it burns as hydrogen + water, not CO₂"},
         ]},
     ]
   },
+
+  /* ── GAME 5 · Slides 17–18 (the 3 Artificial Cycle slides: 16, 17, 18) ── */
   {
     title:"Artificial Solutions", color:"#f59e0b",
-    desc:"All the Artificial Cycle slides",
+    desc:"Slides 16–18",
     notes:[
-      {q:"Q1", txt:"<strong>Oxy-fuel combustion</strong> is a specific technique — verify it's named on slides, or replace with a more general answer."},
-      {q:"Q2", txt:"The <strong>0.04% CO₂ in air</strong> stat should be explicitly on slides — add if missing."},
-      {q:"Q3", txt:"<strong>Cap rock / porous rock layer</strong> details for underground storage should be on slides. Verify before using this question."},
+      {q:null, txt:"Questions draw from <strong>Slide 17 (Direct Air Capture)</strong> and <strong>Slide 18 (CO₂ Storage)</strong>. Slide 16 content was used in Game 4."},
+      {q:"Q1", txt:"Slide 17 states air is <strong>only 0.04% CO₂</strong>. Confirm this stat is clearly written on the slide — students will need to know it."},
+      {q:"Q2", txt:"Slide 18 describes both on-site (pipes, 1km deep) and off-site (tanks, truck) options. <strong>Make sure both transport types are visible on the slide</strong>."},
+      {q:"Q3", txt:"Slide 18 requires <strong>porous rock</strong> and a <strong>cap layer</strong> for safe storage. Confirm these two terms appear on the slide before using this question."},
     ],
     questions:[
-      { q:"Name a technology humans use to artificially capture carbon.",
-        metric:"Points = current + near-term operational capacity (Mt CO₂/yr), normalised to 100",
+      { q:"Name a step or fact about how Direct Air Capture works.",
+        metric:"Points = order of steps in the DAC process on Slide 17",
         answers:[
-          {t:"Point-source capture at factories", p:55, d:"~220 Mt CO₂/yr already operational — the largest deployed method"},
-          {t:"Underground / geological storage",  p:25, d:"~45 Mt CO₂/yr injection capacity currently; needed for all other methods"},
-          {t:"Direct Air Capture / DAC",          p:15, d:"~0.01 Mt CO₂/yr today but scaling fast; only method that works anywhere"},
-          {t:"Oxy-fuel combustion",               p: 5, d:"small pilots only; makes CO₂ concentrated and easier to capture"},
+          {t:"Large fans draw air into the machine",            p:35, d:"Slide 17 — first step; fans pull in huge volumes of outside air"},
+          {t:"Chemical filters concentrate and trap the CO2",   p:35, d:"Slide 17 — engineered filters grab the tiny amount of CO₂ from the air stream"},
+          {t:"The CO2 is heated to separate it from the filter",p:30, d:"Slide 17 — heat releases the captured CO₂ so it can be collected and stored"},
         ]},
-      { q:"Name a challenge with Direct Air Capture technology.",
-        metric:"Points = relative impact on DAC's cost and effectiveness (expert ranking)",
+      { q:"Name a way captured CO2 can be transported or moved to storage.",
+        metric:"Points = scale of each transport method described on Slide 18",
         answers:[
-          {t:"Air is only 0.04% CO₂ — extremely dilute", p:42, d:"dilute CO₂ means enormous volumes of air must be processed; root cause of all other challenges"},
-          {t:"Extremely expensive ($400–1,000/tonne CO₂)", p:30, d:"currently 5–10× more expensive than point-source capture; main barrier to scale"},
-          {t:"Uses massive amounts of energy",             p:20, d:"~2,000 kWh per tonne CO₂ captured — must use clean energy or it defeats the purpose"},
-          {t:"Very hard to scale up quickly",              p: 8, d:"infrastructure, land, water, and energy requirements all multiply at scale"},
+          {t:"Piped underground directly to a storage site / Pipes",          p:40, d:"Slide 18 — on-site option; pipes carry CO₂ 1km+ underground with no trucking"},
+          {t:"Compressed into tanks and moved by truck / Truck",              p:35, d:"Slide 18 — off-site option; CO₂ compressed into tanks, loaded on trucks"},
+          {t:"Injected into porous rock deep underground / Injected in rock", p:25, d:"Slide 18 — final destination for both methods; porous rock absorbs the CO₂"},
         ]},
-      { q:"Name something needed to safely store CO₂ underground.",
-        metric:"Points = criticality for safe long-term storage (geologists' ranking)",
+      { q:"Name something a CO2 underground storage site needs.",
+        metric:"Points = criticality for safe long-term storage, per Slide 18",
         answers:[
-          {t:"Porous rock layer",          p:42, d:"CO₂ is injected into pores of sedimentary rock (like sandstone) >800 m deep"},
-          {t:"Cap rock / sealing layer",   p:40, d:"impermeable cap rock (e.g. shale) above prevents CO₂ from escaping — most safety-critical"},
-          {t:"Deep location (800m+ down)", p:18, d:"below 800 m CO₂ becomes supercritical — denser and less likely to migrate upward"},
+          {t:"Porous rock underground to hold the CO2 / Porous rock", p:45, d:"Slide 18 — porous rock (like sandstone) gives CO₂ somewhere to go and stay"},
+          {t:"An impermeable cap layer above to seal it / Cap layer",  p:35, d:"Slide 18 — the cap rock on top prevents CO₂ from leaking back up"},
+          {t:"Depth of at least 1km underground",                     p:20, d:"Slide 18 — on-site storage must reach 1km+ down to safely contain the CO₂"},
         ]},
     ]
   },
