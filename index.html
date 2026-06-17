@@ -6,267 +6,258 @@
 <title>Saving Carbon Town — Family Feud</title>
 <style>
   :root{
-    --bg1:#0a1929;--bg2:#0d2840;--panel:#0b2035;
-    --tile:#1b4f7e;--tile-hover:#2563aa;
-    --gold:#f5c542;--gold-deep:#d9a800;
-    --teal:#22d3a8;--teal-deep:#0e8f73;
+    --bg:#0a1929;--panel:#0b2035;
+    --blue:#1b4f7e;--blue2:#0e3357;--blue-border:#2a6aa0;
+    --gold:#f5c542;--gold2:#d9a800;
+    --teal:#22d3a8;--teal2:#0e8f73;
     --txt:#eaf4ff;--muted:#7fa6c4;--line:#1d4368;
-    --red:#ef4444;--red-deep:#b91c1c;
-    --pink:#e0479b;
+    --red:#ef4444;--red2:#b91c1c;
+    --green:#4ade80;--green2:#16a34a;
+    --team1:#3b82f6;--team2:#e0479b;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{height:100%;}
-  body{
-    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-    background:radial-gradient(120% 120% at 50% -10%,#143657 0%,var(--bg1) 55%,#05101c 100%);
-    color:var(--txt);min-height:100%;-webkit-font-smoothing:antialiased;
-  }
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:radial-gradient(120% 120% at 50% -10%,#143657 0%,var(--bg) 55%,#05101c 100%);color:var(--txt);min-height:100%;-webkit-font-smoothing:antialiased;}
   button{font:inherit;cursor:pointer;}
+  .screen{display:none;} .screen.active{display:block;} #gameScreen.active{display:flex;flex-direction:column;min-height:100vh;}
 
-  /* ===== SCREENS ===== */
-  .screen{display:none;}
-  .screen.active{display:block;}
-  #gameScreen.active{display:flex;flex-direction:column;min-height:100vh;}
-
-  /* ===== MENU ===== */
-  #menuScreen{max-width:1120px;margin:0 auto;padding:44px 20px 60px;}
-  .menu-header{text-align:center;margin-bottom:40px;}
+  /* ── MENU ── */
+  #menuScreen{max-width:1100px;margin:0 auto;padding:44px 20px 60px;}
+  .mhead{text-align:center;margin-bottom:36px;}
   .kicker{display:block;letter-spacing:.3em;font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;margin-bottom:10px;}
-  .menu-header h1{
-    font-size:clamp(30px,5vw,54px);font-weight:900;line-height:1;
-    background:linear-gradient(180deg,#fff,var(--gold));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    margin-bottom:10px;
-  }
-  .menu-header p{color:var(--muted);font-size:15px;}
-  .game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
-  .game-card{
-    background:linear-gradient(180deg,#103a5f,#0c2742);
-    border:1px solid var(--line);border-radius:16px;padding:22px 24px;
-    cursor:pointer;position:relative;overflow:hidden;
-    transition:transform .1s,box-shadow .15s;
-  }
-  .game-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--c,var(--teal));}
-  .game-card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(0,0,0,.45);}
-  .game-card .gnum{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-  .game-card h2{font-size:20px;font-weight:900;margin-bottom:6px;}
-  .game-card p{font-size:13px;color:var(--muted);line-height:1.5;}
-  .game-card .qcount{margin-top:12px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c,var(--teal));}
+  .mhead h1{font-size:clamp(28px,5vw,52px);font-weight:900;background:linear-gradient(180deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px;}
+  .mhead p{color:var(--muted);font-size:14px;}
+  .ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:28px;}
+  .gcard{background:linear-gradient(180deg,#103a5f,#0c2742);border:1px solid var(--line);border-radius:16px;padding:20px 22px;cursor:pointer;position:relative;overflow:hidden;transition:transform .1s,box-shadow .15s;}
+  .gcard::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--c,var(--teal));}
+  .gcard:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(0,0,0,.45);}
+  .gcard .gn{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .gcard h2{font-size:19px;font-weight:900;margin-bottom:5px;}
+  .gcard p{font-size:13px;color:var(--muted);line-height:1.5;}
+  .gcard .qc{margin-top:10px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c,var(--teal));}
 
-  /* ===== GAME HEADER ===== */
-  .game-hdr{
-    background:#06192b;border-bottom:1px solid var(--line);
-    padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-  }
-  .game-hdr .title{font-weight:900;font-size:17px;}
-  .game-hdr .rinfo{font-size:13px;color:var(--muted);font-weight:600;}
-  .btn-back{
-    background:transparent;color:var(--muted);border:1px solid var(--line);
-    border-radius:8px;padding:7px 13px;font-weight:700;font-size:13px;
-  }
+  /* ── GAME HEADER ── */
+  .ghdr{background:#06192b;border-bottom:1px solid var(--line);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .ghdr .gtitle{font-weight:900;font-size:17px;}
+  .ghdr .grnd{font-size:13px;color:var(--muted);font-weight:600;}
+  .btn-back{background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:7px 13px;font-weight:700;font-size:13px;}
   .btn-back:hover{background:#0e2c47;color:var(--txt);}
 
-  /* ===== GAME BODY ===== */
-  .game-body{
-    flex:1;display:grid;grid-template-columns:190px 1fr 190px;
-    gap:0;padding:16px 16px 0;max-width:1280px;margin:0 auto;width:100%;align-items:start;
-  }
+  /* ── GAME BODY ── */
+  .gbody{flex:1;display:grid;grid-template-columns:180px 1fr 180px;padding:14px 14px 0;max-width:1280px;margin:0 auto;width:100%;align-items:start;}
 
-  /* ===== TEAM PANELS ===== */
-  .tpanel{
-    background:linear-gradient(180deg,#103a5f,#0c2742);
-    border:1px solid var(--line);border-radius:14px;padding:14px 12px;
-    text-align:center;position:sticky;top:16px;transition:border-color .2s,box-shadow .2s;
-  }
-  .tpanel.t-active{border-color:var(--teal);box-shadow:0 0 0 2px rgba(34,211,168,.25);}
-  .tpanel.t-steal{border-color:var(--pink);animation:stealPulse 1s infinite;}
-  @keyframes stealPulse{0%,100%{box-shadow:0 0 0 2px rgba(224,71,155,.2);}50%{box-shadow:0 0 0 7px rgba(224,71,155,.45);}}
-  .t-lbl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-  .t-name{
-    font-size:14px;font-weight:900;color:var(--txt);display:block;
-    outline:none;border-radius:6px;padding:3px 5px;text-align:center;margin-bottom:8px;
-  }
-  .t-name:focus{background:#0e2c47;box-shadow:0 0 0 2px var(--teal);}
-  .t-score{font-size:42px;font-weight:900;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;}
-  .t-rnd{font-size:11px;color:var(--muted);font-weight:600;margin-top:3px;}
-  .t-badge{display:none;margin-top:8px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;}
-  .tpanel.t-active .badge-active{display:block;color:var(--teal);}
-  .tpanel.t-steal .badge-steal{display:block;color:var(--pink);}
+  /* ── TEAM PANELS ── */
+  .tp{background:linear-gradient(180deg,#103a5f,#0c2742);border:2px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;position:sticky;top:14px;transition:border-color .2s,box-shadow .2s;}
+  .tp.t1-active{border-color:var(--team1);box-shadow:0 0 0 3px rgba(59,130,246,.25);}
+  .tp.t2-active{border-color:var(--team2);box-shadow:0 0 0 3px rgba(224,71,155,.25);}
+  .tlbl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+  .tname{font-size:13px;font-weight:900;color:var(--txt);display:block;outline:none;border-radius:6px;padding:3px 4px;text-align:center;margin-bottom:8px;}
+  .tname:focus{background:#0e2c47;box-shadow:0 0 0 2px var(--teal);}
+  .tscore{font-size:40px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;}
+  .t1score{color:var(--team1);}
+  .t2score{color:var(--team2);}
+  .trnd{font-size:11px;color:var(--muted);font-weight:600;margin-top:3px;}
+  .tbadge{display:none;margin-top:8px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:99px;}
+  .tp.t1-active .b1{display:block;background:rgba(59,130,246,.2);color:var(--team1);}
+  .tp.t2-active .b2{display:block;background:rgba(224,71,155,.2);color:var(--team2);}
 
-  /* ===== CENTER ===== */
-  .center{padding:0 14px;}
-  .q-box{
-    background:linear-gradient(180deg,#1b4f7e,#0e3357);
-    border:1px solid #2a6aa0;border-radius:14px;
-    padding:18px 22px;text-align:center;margin-bottom:14px;
+  /* ── CENTER ── */
+  .center{padding:0 12px;display:flex;flex-direction:column;gap:12px;}
+  .qbox{background:linear-gradient(180deg,var(--blue),var(--blue2));border:1px solid var(--blue-border);border-radius:14px;padding:16px 20px;text-align:center;}
+  .qbox .qlbl{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+  .qbox .qtxt{font-size:clamp(16px,2.3vw,24px);font-weight:800;line-height:1.4;color:#dff1ff;}
+
+  /* ── INPUT AREA ── */
+  .input-area{background:#07202f;border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .input-label{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px;text-align:center;}
+  .input-label span{font-size:14px;font-weight:900;letter-spacing:0;text-transform:none;}
+  .input-row{display:flex;gap:8px;}
+  .input-row input{
+    flex:1;background:#0b2035;border:2px solid var(--line);border-radius:10px;
+    color:var(--txt);font:inherit;font-size:16px;font-weight:700;padding:10px 14px;outline:none;
+    transition:border-color .15s;
   }
-  .q-box .qlbl{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-  .q-box .qtxt{font-size:clamp(17px,2.4vw,25px);font-weight:800;line-height:1.4;color:#dff1ff;}
+  .input-row input:focus{border-color:var(--teal);}
+  .input-row input.wrong-shake{animation:shake .3s ease;border-color:var(--red);}
+  .input-row input.right-flash{border-color:var(--green);}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  .submit-btn{background:linear-gradient(180deg,#ffe28a,var(--gold));color:#06202f;border:none;border-radius:10px;padding:10px 18px;font-weight:800;font-size:14px;box-shadow:0 2px 0 var(--gold2);}
+  .submit-btn:hover{filter:brightness(1.06);}
+  .submit-btn:active{transform:translateY(1px);box-shadow:none;}
+  .feedback{min-height:22px;text-align:center;font-size:13px;font-weight:700;margin-top:8px;transition:opacity .2s;}
+  .feedback.match{color:var(--green);}
+  .feedback.miss{color:var(--red);}
 
-  /* Phase banner */
-  .phase-banner{
-    display:none;margin:0 auto 12px;width:max-content;max-width:100%;
-    background:linear-gradient(180deg,#ff8fc7,var(--pink));color:#2a0418;
-    font-weight:900;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
-    padding:7px 20px;border-radius:999px;text-align:center;
-    animation:pop .3s ease;
-  }
-  .phase-banner.show{display:block;}
-  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
-
-  /* ===== ANSWER BOARD ===== */
-  .board{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;}
-
-  /* tile flip */
-  .tw{perspective:700px;height:76px;}
+  /* ── BOARD ── */
+  .board{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .tw{perspective:700px;height:72px;}
   .ti{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
   .tw.revealed .ti{transform:rotateX(180deg);}
-  .tf,.tb{
-    position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;
-    display:flex;align-items:center;justify-content:center;font-weight:800;
-  }
-  .tf{
-    background:linear-gradient(180deg,var(--tile),#0e3357);
-    border:1px solid #2a6aa0;font-size:26px;color:var(--gold);
-    cursor:pointer;transition:background .15s;
-  }
-  .tf:hover{background:linear-gradient(180deg,var(--tile-hover),#1b4a80);}
-  .tw.revealed .tf{cursor:default;}
-  .tb{
-    background:linear-gradient(180deg,#c97010,#9a5108);
-    border:1px solid #f59e0b;transform:rotateX(180deg);
-    flex-direction:column;gap:1px;padding:7px 10px;text-align:center;
-  }
-  .tb .atxt{font-size:clamp(12px,1.6vw,15px);color:#fff;font-weight:800;line-height:1.25;}
-  .tb .apts{font-size:22px;font-weight:900;color:#fef3c7;}
+  .tf,.tb{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;font-weight:800;}
+  .tf{background:linear-gradient(180deg,var(--blue),var(--blue2));border:1px solid var(--blue-border);font-size:24px;color:var(--gold);cursor:default;}
+  .tb{background:linear-gradient(180deg,#c97010,#9a5108);border:1px solid #f59e0b;transform:rotateX(180deg);flex-direction:column;gap:1px;padding:6px 10px;text-align:center;position:relative;}
+  .tb .atxt{font-size:clamp(11px,1.5vw,14px);color:#fff;font-weight:800;line-height:1.2;}
+  .tb .apts{font-size:20px;font-weight:900;color:#fef3c7;}
+  .tb .owner-tag{position:absolute;top:3px;right:5px;font-size:9px;font-weight:900;letter-spacing:.06em;padding:1px 5px;border-radius:99px;}
+  .tb .owner-t1{background:rgba(59,130,246,.3);color:#93c5fd;}
+  .tb .owner-t2{background:rgba(224,71,155,.3);color:#f9a8d4;}
+  .tw.no-owner .tb{background:linear-gradient(180deg,#2a4a2a,#1a3a1a);border-color:#4ade80;}
 
-  /* ===== STRIKES ===== */
-  .strikes-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;}
-  .s-lbl{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
-  .s-marks{display:flex;gap:10px;}
-  .sm{
-    width:46px;height:46px;border-radius:50%;border:2px solid #1e4d77;
-    display:flex;align-items:center;justify-content:center;
-    font-size:28px;font-weight:900;color:transparent;transition:all .2s;
-  }
+  /* ── STRIKES ── */
+  .strikes-row{display:flex;align-items:center;justify-content:center;gap:12px;}
+  .slbl{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
+  .smarks{display:flex;gap:8px;}
+  .sm{width:42px;height:42px;border-radius:50%;border:2px solid #1e4d77;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:transparent;transition:all .2s;}
   .sm.hit{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.15);animation:shk .35s ease;}
   @keyframes shk{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
 
-  /* ===== CONTROLS ===== */
-  .ctrl-bar{
-    background:#06192b;border-top:1px solid var(--line);
-    padding:12px 18px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
-    position:sticky;bottom:0;
-  }
-  .btn{
-    border:none;border-radius:10px;padding:11px 18px;font-weight:800;font-size:14px;
-    transition:transform .08s,filter .15s;
-    box-shadow:0 2px 0 rgba(0,0,0,.35);
-  }
+  /* ── HOST KEY ── */
+  .host-key{background:#041522;border:1px solid #0e3357;border-radius:12px;overflow:hidden;}
+  .hk-toggle{width:100%;background:transparent;border:none;color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;}
+  .hk-toggle:hover{background:#06192b;color:var(--txt);}
+  .hk-body{display:none;padding:10px 14px 12px;border-top:1px solid #0e3357;}
+  .hk-body.open{display:block;}
+  .hk-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #0e2a3f;font-size:13px;gap:8px;}
+  .hk-row:last-child{border:none;}
+  .hk-row.found{opacity:.4;text-decoration:line-through;}
+  .hk-ans{color:#c7e3ff;font-weight:600;flex:1;}
+  .hk-pts{color:var(--gold);font-weight:800;min-width:28px;text-align:right;}
+  .hk-num{color:var(--muted);font-weight:800;min-width:18px;}
+
+  /* ── SLIDE NOTES ── */
+  .slide-notes{background:#1a0d00;border:1px solid #7c3a0a;border-radius:12px;overflow:hidden;}
+  .sn-toggle{width:100%;background:transparent;border:none;color:#f59e0b;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;}
+  .sn-toggle:hover{background:#200f00;}
+  .sn-body{display:none;padding:10px 14px 12px;border-top:1px solid #7c3a0a;}
+  .sn-body.open{display:block;}
+  .sn-body ul{padding-left:16px;display:flex;flex-direction:column;gap:6px;}
+  .sn-body li{font-size:12px;color:#fcd34d;line-height:1.5;}
+  .sn-body li strong{color:#fef3c7;}
+
+  /* ── CONTROLS ── */
+  .ctrl{background:#06192b;border-top:1px solid var(--line);padding:10px 16px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;position:sticky;bottom:0;}
+  .btn{border:none;border-radius:10px;padding:10px 16px;font-weight:800;font-size:13px;box-shadow:0 2px 0 rgba(0,0,0,.35);transition:transform .08s,filter .15s;}
   .btn:hover{filter:brightness(1.08);}
   .btn:active{transform:translateY(2px);box-shadow:none;}
-  .btn-wrong{background:linear-gradient(180deg,#ef4444,var(--red-deep));color:#fff;}
-  .btn-steal-right{background:linear-gradient(180deg,#4ade80,#16a34a);color:#052e16;}
-  .btn-steal-wrong{background:linear-gradient(180deg,#ef4444,var(--red-deep));color:#fff;}
   .btn-reveal{background:linear-gradient(180deg,#ffe28a,var(--gold));color:#06202f;}
-  .btn-next{background:linear-gradient(180deg,#4ade80,#16a34a);color:#052e16;}
   .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line);box-shadow:none;}
   .btn-ghost:hover{background:#0e2c47;color:var(--txt);}
+  .btn-next{background:linear-gradient(180deg,var(--green),var(--green2));color:#052e16;}
 
-  /* ===== OVERLAYS ===== */
+  /* ── OVERLAYS ── */
   .overlay{position:fixed;inset:0;background:rgba(2,9,18,.85);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
   .overlay.show{display:flex;}
-  .modal{
-    width:min(580px,96vw);background:linear-gradient(180deg,#0f3a63,#0a2641);
-    border:1px solid #2a6aa0;border-radius:18px;padding:30px 34px;text-align:center;
-    animation:pop .22s ease;
-  }
-  .modal h2{font-size:clamp(22px,3.5vw,34px);font-weight:900;color:var(--gold);margin-bottom:6px;}
-  .modal .sub{color:var(--muted);font-size:15px;margin-bottom:22px;}
-  .ss-row{display:flex;gap:14px;justify-content:center;margin-bottom:22px;}
+  .modal{width:min(580px,96vw);background:linear-gradient(180deg,#0f3a63,#0a2641);border:1px solid var(--blue-border);border-radius:18px;padding:28px 32px;text-align:center;animation:pop .22s ease;}
+  @keyframes pop{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+  .modal h2{font-size:clamp(20px,3.5vw,32px);font-weight:900;color:var(--gold);margin-bottom:6px;}
+  .modal .sub{color:var(--muted);font-size:14px;margin-bottom:20px;}
+  .ss-row{display:flex;gap:12px;justify-content:center;margin-bottom:20px;}
   .ss{flex:1;background:#06192b;border:1px solid var(--line);border-radius:12px;padding:14px;}
-  .ss.winner{border-color:var(--teal);}
-  .ss .ssn{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px;}
-  .ss .ssp{font-size:34px;font-weight:900;color:var(--gold);}
-  .ss.winner .ssp{color:var(--teal);}
+  .ss .ssn{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px;}
+  .ss .ssp{font-size:32px;font-weight:900;}
+  .ss.s1 .ssp{color:var(--team1);}
+  .ss.s2 .ssp{color:var(--team2);}
+  .ss.winner{border-width:2px;}
+  .ss.s1.winner{border-color:var(--team1);}
+  .ss.s2.winner{border-color:var(--team2);}
   .modal-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
 
-  @media(max-width:750px){
-    .game-body{grid-template-columns:1fr;gap:12px;}
-    .tpanel{position:static;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;}
-    .tpanel .t-score{font-size:28px;}
-    .t-badge{margin:0;}
+  @media(max-width:720px){
+    .gbody{grid-template-columns:1fr;gap:12px;}
+    .tp{position:static;display:flex;align-items:center;gap:10px;text-align:left;}
+    .tp .tscore{font-size:28px;}
+    .tbadge{margin:0;}
     .board{grid-template-columns:1fr;}
-    .tw{height:64px;}
   }
 </style>
 </head>
 <body>
 
-<!-- ===== MENU ===== -->
+<!-- ══ MENU ══ -->
 <div id="menuScreen" class="screen active">
-  <div class="menu-header">
+  <div class="mhead">
     <span class="kicker">Carbon Clash · EcoRise Camp</span>
     <h1>SAVING CARBON TOWN</h1>
-    <p>Family Feud Edition · Choose a game</p>
+    <p>Family Feud Edition · pick a game to start</p>
   </div>
-  <div class="game-grid" id="gameGrid"></div>
+  <div class="ggrid" id="ggrid"></div>
 </div>
 
-<!-- ===== GAME ===== -->
+<!-- ══ GAME ══ -->
 <div id="gameScreen" class="screen">
-  <div class="game-hdr">
+  <div class="ghdr">
     <button class="btn-back" id="backBtn">← Menu</button>
-    <div class="title" id="hdrTitle">—</div>
-    <div class="rinfo" id="hdrRound">Round 1 of 3</div>
+    <div class="gtitle" id="hTitle">—</div>
+    <div class="grnd" id="hRound">Round 1 of 3</div>
   </div>
 
-  <div class="game-body">
+  <div class="gbody">
     <!-- Team 1 -->
-    <div class="tpanel" id="tp1">
-      <div class="t-lbl">Team 1</div>
-      <span class="t-name" id="tn1" contenteditable spellcheck="false">City Council A</span>
-      <div class="t-score" id="ts1">0</div>
-      <div class="t-rnd" id="tr1">+0 this round</div>
-      <div class="t-badge badge-active">▶ Playing</div>
-      <div class="t-badge badge-steal">★ STEAL!</div>
+    <div class="tp" id="tp1">
+      <div class="tlbl">Team 1</div>
+      <span class="tname" id="tn1" contenteditable spellcheck="false">City Council A</span>
+      <div class="tscore t1score" id="ts1">0</div>
+      <div class="trnd" id="tr1">+0 this round</div>
+      <div class="tbadge b1">▶ Guessing</div>
+      <div class="tbadge b2" style="display:none"></div>
     </div>
 
     <!-- Center -->
     <div class="center">
-      <div class="q-box">
+      <div class="qbox">
         <div class="qlbl">Question</div>
         <div class="qtxt" id="qText">—</div>
       </div>
-      <div class="phase-banner" id="phaseBanner">★ STEAL TIME!</div>
+
+      <div class="input-area">
+        <div class="input-label" id="inputLabel">Waiting…</div>
+        <div class="input-row">
+          <input type="text" id="answerInput" placeholder="Type the team's answer…" autocomplete="off" />
+          <button class="submit-btn" id="submitBtn">Submit</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+
       <div class="board" id="board"></div>
+
       <div class="strikes-row">
-        <span class="s-lbl">Strikes</span>
-        <div class="s-marks">
+        <span class="slbl">Strikes</span>
+        <div class="smarks">
           <div class="sm" id="sm0"></div>
           <div class="sm" id="sm1"></div>
           <div class="sm" id="sm2"></div>
         </div>
       </div>
+
+      <div class="host-key">
+        <button class="hk-toggle" id="hkToggle">
+          <span>🔑 Host Answer Key</span><span id="hkArrow">▼</span>
+        </button>
+        <div class="hk-body" id="hkBody"></div>
+      </div>
+
+      <div class="slide-notes" id="slideNotesWrap" style="display:none">
+        <button class="sn-toggle" id="snToggle">
+          <span>⚠️ Slide Coverage Notes</span><span id="snArrow">▼</span>
+        </button>
+        <div class="sn-body" id="snBody"></div>
+      </div>
     </div>
 
     <!-- Team 2 -->
-    <div class="tpanel" id="tp2">
-      <div class="t-lbl">Team 2</div>
-      <span class="t-name" id="tn2" contenteditable spellcheck="false">City Council B</span>
-      <div class="t-score" id="ts2">0</div>
-      <div class="t-rnd" id="tr2">+0 this round</div>
-      <div class="t-badge badge-active">▶ Playing</div>
-      <div class="t-badge badge-steal">★ STEAL!</div>
+    <div class="tp" id="tp2">
+      <div class="tlbl">Team 2</div>
+      <span class="tname" id="tn2" contenteditable spellcheck="false">City Council B</span>
+      <div class="tscore t2score" id="ts2">0</div>
+      <div class="trnd" id="tr2">+0 this round</div>
+      <div class="tbadge b1" style="display:none"></div>
+      <div class="tbadge b2">▶ Guessing</div>
     </div>
   </div>
 
-  <div class="ctrl-bar" id="ctrlBar">
-    <button class="btn btn-wrong" id="btnWrong">✗ Wrong Answer</button>
-    <button class="btn btn-steal-right" id="btnStealRight">✓ Steal — Right!</button>
-    <button class="btn btn-steal-wrong" id="btnStealWrong">✗ Steal — Wrong!</button>
-    <button class="btn btn-reveal" id="btnReveal">Reveal All</button>
-    <button class="btn btn-next" id="btnNext">Next Question →</button>
+  <div class="ctrl">
+    <button class="btn btn-reveal" id="btnReveal">Reveal All &amp; End Round</button>
+    <button class="btn btn-ghost" id="btnSkip">Skip Question (no points)</button>
   </div>
 </div>
 
@@ -274,7 +265,7 @@
 <div class="overlay" id="roOverlay">
   <div class="modal">
     <h2 id="roTitle">Round Over!</h2>
-    <div class="sub" id="roSub">Points awarded.</div>
+    <div class="sub" id="roSub">Scores updated.</div>
     <div class="ss-row" id="roScores"></div>
     <div class="modal-btns">
       <button class="btn btn-next" id="btnRoNext">Next Question →</button>
@@ -296,13 +287,19 @@
 </div>
 
 <script>
-/* ============================================================
+/* ═══════════════════════════════════════════
    GAME DATA
-   ============================================================ */
+   ═══════════════════════════════════════════ */
 const GAMES = [
   {
     title:"Overview & Storage", color:"#22d3a8",
     desc:"Overview and Storage slides",
+    notes:[
+      {q:null, txt:"Ensure slides explicitly list all 5 main carbon stores: <strong>soil, ocean, trees/forests, atmosphere, fossil fuels</strong>."},
+      {q:null, txt:"Ensure slides name all 4 carbon cycle steps: <strong>photosynthesis, decomposition, respiration, absorption</strong>."},
+      {q:"Q2",  txt:"<strong>'Absorption'</strong> as a named cycle step may not be on slides — add it if missing."},
+      {q:"Q3",  txt:"<strong>Wetlands/bogs</strong> as carbon stores are covered in the Sinks unit — worth a brief mention in Storage too."},
+    ],
     questions:[
       { q:"Name somewhere on Earth where carbon is stored.",
         answers:[{t:"Soil / Underground",p:30},{t:"Ocean / Sea",p:25},{t:"Trees / Forests",p:22},{t:"Atmosphere",p:13},{t:"Fossil Fuels",p:10}]},
@@ -315,30 +312,43 @@ const GAMES = [
   {
     title:"Sinks", color:"#3b82f6",
     desc:"Ocean / Blue Carbon, Forests / Wetlands slides",
+    notes:[
+      {q:null, txt:"Ensure slides cover ocean, forests, wetlands, mangroves, and seagrass as distinct sinks."},
+      {q:"Q2",  txt:"<strong>Salt marshes</strong> as a blue carbon ecosystem may not be explicitly named on slides — add it."},
+      {q:"Q3",  txt:"The <strong>30%+ CO₂ absorption stat</strong> and <strong>phytoplankton's role</strong> should appear on slides. Add if missing."},
+    ],
     questions:[
       { q:"Name a natural carbon sink.",
         answers:[{t:"Ocean",p:33},{t:"Forest",p:28},{t:"Wetland / Bog / Peatland",p:20},{t:"Mangroves",p:12},{t:"Seagrass",p:7}]},
       { q:"Name a type of 'blue carbon' ecosystem.",
         answers:[{t:"Mangroves",p:44},{t:"Seagrass meadows",p:35},{t:"Salt marshes",p:21}]},
       { q:"Name a reason the ocean is Earth's biggest carbon sink.",
-        answers:[{t:"Absorbs 30%+ of human CO₂",p:38},{t:"Phytoplankton convert CO₂ to organic matter",p:30},{t:"Dissolves CO₂ straight from the air",p:22},{t:"Covers most of Earth's surface",p:10}]},
+        answers:[{t:"Absorbs over 30% of human CO₂",p:38},{t:"Phytoplankton convert CO₂ to organic matter",p:30},{t:"Dissolves CO₂ straight from the air",p:22},{t:"Covers most of Earth's surface",p:10}]},
     ]
   },
   {
     title:"Stores", color:"#a855f7",
     desc:"Atmosphere and Soil slides",
+    notes:[
+      {q:"Q2", txt:"<strong>Humus</strong> as a soil carbon form should be named on slides — add if missing."},
+      {q:"Q3", txt:"The explanation that <strong>less oxygen underground slows decay</strong> (why soil stores more than branches) should be on slides."},
+      {q:"Q3", txt:"<strong>Humus being decay-resistant</strong> is a specific detail — verify it's on slides or omit this answer from play."},
+    ],
     questions:[
       { q:"Name a greenhouse gas found in the atmosphere.",
-        answers:[{t:"Carbon dioxide (CO₂)",p:42},{t:"Methane",p:35},{t:"Water vapor",p:15},{t:"Nitrous oxide",p:8}]},
+        answers:[{t:"Carbon dioxide / CO2",p:42},{t:"Methane",p:35},{t:"Water vapor",p:15},{t:"Nitrous oxide",p:8}]},
       { q:"Name something that stores carbon in soil.",
         answers:[{t:"Humus / Organic matter",p:38},{t:"Plant roots",p:28},{t:"Microbes / Bacteria / Fungi",p:22},{t:"Dead plant material",p:12}]},
-      { q:"Name a reason soil stores more carbon than forest branches above ground.",
+      { q:"Name a reason soil stores more carbon than tree branches above ground.",
         answers:[{t:"Less oxygen slows decay underground",p:40},{t:"Roots lock carbon deep down",p:30},{t:"Humus is decay-resistant",p:20},{t:"Soil covers far more area",p:10}]},
     ]
   },
   {
     title:"Sources", color:"#ef4444",
     desc:"Animals, Fossil Fuels, and Humans slides",
+    notes:[
+      {q:"Q3", txt:"Slides likely name <strong>cows</strong> for methane — <strong>sheep, pigs, goats</strong> may not be mentioned. Add them or drop them from play."},
+    ],
     questions:[
       { q:"Name something humans do that releases carbon into the air.",
         answers:[{t:"Burn fossil fuels",p:38},{t:"Drive cars / Transportation",p:28},{t:"Cut down forests / Deforestation",p:18},{t:"Run factories / Industry",p:12},{t:"Fly in airplanes",p:4}]},
@@ -351,36 +361,62 @@ const GAMES = [
   {
     title:"Artificial Solutions", color:"#f59e0b",
     desc:"All the Artificial Cycle slides",
+    notes:[
+      {q:"Q1", txt:"<strong>Oxy-fuel combustion</strong> is a specific technique — verify it's named on slides, or replace with a more general answer."},
+      {q:"Q2", txt:"The <strong>0.04% CO₂ in air</strong> stat should be explicitly on slides — add if missing."},
+      {q:"Q3", txt:"<strong>Cap rock / porous rock layer</strong> details for underground storage should be on slides. Verify before using this question."},
+    ],
     questions:[
       { q:"Name a technology humans use to artificially capture carbon.",
-        answers:[{t:"Direct Air Capture (DAC)",p:36},{t:"Point-source capture at factories",p:32},{t:"Underground / geological storage",p:22},{t:"Oxy-fuel combustion",p:10}]},
+        answers:[{t:"Direct Air Capture / DAC",p:36},{t:"Point-source capture at factories",p:32},{t:"Underground / geological storage",p:22},{t:"Oxy-fuel combustion",p:10}]},
       { q:"Name a challenge with Direct Air Capture technology.",
-        answers:[{t:"Air is only ~0.04% CO₂",p:38},{t:"Very expensive",p:32},{t:"Uses a lot of energy",p:20},{t:"Hard to scale up",p:10}]},
+        answers:[{t:"Air is only 0.04% CO2",p:38},{t:"Very expensive",p:32},{t:"Uses a lot of energy",p:20},{t:"Hard to scale up",p:10}]},
       { q:"Name something needed to safely store CO₂ underground.",
         answers:[{t:"Porous rock layer",p:42},{t:"Cap rock / sealing layer on top",p:38},{t:"Deep location",p:20}]},
     ]
   },
 ];
 
-/* ============================================================
+/* ═══════════════════════════════════════════
    STATE
-   ============================================================ */
+   ═══════════════════════════════════════════ */
 let S = {};
-
 function initState(gIdx) {
-  S = { g:gIdx, q:0, revealed:new Set(), strikes:0, active:1, phase:'play', scores:[0,0] };
+  S = { g:gIdx, q:0, revealed:new Set(), owner:{}, strikes:0, active:1, phase:'play', scores:[0,0], roundScores:[0,0] };
 }
 
-/* ============================================================
+/* ═══════════════════════════════════════════
+   ANSWER MATCHING
+   ═══════════════════════════════════════════ */
+function clean(s) {
+  return s.replace(/₂/g,'2').replace(/co2/gi,'co2').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+}
+function findMatch(input) {
+  const inp = clean(input);
+  if (inp.length < 2) return -1;
+  const q = GAMES[S.g].questions[S.q];
+  for (let i = 0; i < q.answers.length; i++) {
+    if (S.revealed.has(i)) continue;
+    const variants = q.answers[i].t.split('/').map(v => clean(v));
+    for (const v of variants) {
+      if (!v || v.length < 2) continue;
+      if (v === inp) return i;
+      if (inp.length >= 3 && v.includes(inp)) return i;
+      if (v.length >= 3 && inp.includes(v)) return i;
+    }
+  }
+  return -1;
+}
+
+/* ═══════════════════════════════════════════
    MENU
-   ============================================================ */
+   ═══════════════════════════════════════════ */
 GAMES.forEach((g, i) => {
   const el = document.createElement('div');
-  el.className = 'game-card';
-  el.style.setProperty('--c', g.color);
-  el.innerHTML = `<div class="gnum">Game ${i+1}</div><h2>${g.title}</h2><p>${g.desc}</p><div class="qcount">${g.questions.length} questions</div>`;
+  el.className = 'gcard'; el.style.setProperty('--c', g.color);
+  el.innerHTML = `<div class="gn">Game ${i+1}</div><h2>${g.title}</h2><p>${g.desc}</p><div class="qc">${g.questions.length} questions</div>`;
   el.onclick = () => startGame(i);
-  document.getElementById('gameGrid').appendChild(el);
+  document.getElementById('ggrid').appendChild(el);
 });
 
 function showScreen(id) {
@@ -388,94 +424,154 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
-/* ============================================================
-   GAME START / ROUND RENDER
-   ============================================================ */
+/* ═══════════════════════════════════════════
+   GAME START / ROUND
+   ═══════════════════════════════════════════ */
 function startGame(idx) {
   initState(idx);
-  document.getElementById('hdrTitle').textContent = GAMES[idx].title;
+  document.getElementById('hTitle').textContent = GAMES[idx].title;
   showScreen('gameScreen');
   renderRound();
 }
 
 function renderRound() {
   const g = GAMES[S.g], q = g.questions[S.q];
-  S.revealed = new Set(); S.strikes = 0; S.phase = 'play';
-  document.getElementById('hdrRound').textContent = `Round ${S.q+1} of ${g.questions.length}`;
-  document.getElementById('qText').textContent = q.q;
-  document.getElementById('phaseBanner').classList.remove('show');
+  S.revealed = new Set(); S.owner = {}; S.strikes = 0; S.phase = 'play';
+  S.roundScores = [0, 0];
 
+  document.getElementById('hRound').textContent = `Round ${S.q+1} of ${g.questions.length}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('answerInput').value = '';
+  document.getElementById('answerInput').disabled = false;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+
+  // Board tiles
   const board = document.getElementById('board');
   board.innerHTML = '';
   q.answers.forEach((a, i) => {
     const tw = document.createElement('div');
     tw.className = 'tw'; tw.dataset.i = i;
-    tw.innerHTML = `<div class="ti">
-      <div class="tf">${i+1}</div>
-      <div class="tb"><div class="atxt">${a.t}</div><div class="apts">${a.p}</div></div>
-    </div>`;
-    tw.querySelector('.tf').onclick = () => reveal(i);
+    tw.innerHTML = `<div class="ti"><div class="tf">${i+1}</div><div class="tb"><div class="atxt">${a.t}</div><div class="apts">${a.p} pts</div><div class="owner-tag" id="ot${i}"></div></div></div>`;
     board.appendChild(tw);
   });
 
-  updateStrikes(); updatePanels(); updateControls();
+  // Host key
+  buildHostKey();
+  // Slide notes
+  buildSlideNotes();
+
+  updateStrikes(); updatePanels(); updateInputLabel();
+  document.getElementById('answerInput').focus();
 }
 
-/* ============================================================
-   CORE ACTIONS
-   ============================================================ */
-function reveal(idx) {
-  if (S.revealed.has(idx) || S.phase === 'done') return;
+/* ═══════════════════════════════════════════
+   GUESSING
+   ═══════════════════════════════════════════ */
+function submitGuess() {
+  if (S.phase !== 'play') return;
+  const input = document.getElementById('answerInput');
+  const val = input.value.trim();
+  if (!val) return;
+
+  const idx = findMatch(val);
+  input.value = '';
+
+  if (idx !== -1) {
+    // Correct!
+    revealTile(idx, S.active);
+    const pts = GAMES[S.g].questions[S.q].answers[idx].p;
+    S.roundScores[S.active-1] += pts;
+
+    showFeedback(`✓ "${GAMES[S.g].questions[S.q].answers[idx].t}" — +${pts} pts for ${teamName(S.active)}!`, 'match');
+    input.classList.add('right-flash');
+    setTimeout(() => input.classList.remove('right-flash'), 600);
+
+    const allRevealed = S.revealed.size === GAMES[S.g].questions[S.q].answers.length;
+    switchTeam();
+    updatePanels();
+    updateHostKey();
+    if (allRevealed) { endRound(); return; }
+  } else {
+    // Wrong
+    S.strikes++;
+    showFeedback(`✗ No match — Strike ${S.strikes} of 3`, 'miss');
+    input.classList.add('wrong-shake');
+    setTimeout(() => input.classList.remove('wrong-shake'), 400);
+    updateStrikes();
+
+    if (S.strikes >= 3) {
+      showFeedback('✗✗✗ Three strikes — revealing remaining answers!', 'miss');
+      document.getElementById('answerInput').disabled = true;
+      setTimeout(() => { revealRemaining(); endRound(); }, 1200);
+      return;
+    }
+    switchTeam();
+    updatePanels();
+  }
+  updateInputLabel();
+  setTimeout(() => document.getElementById('answerInput').focus(), 50);
+}
+
+function switchTeam() { S.active = S.active === 1 ? 2 : 1; }
+
+function revealTile(idx, team) {
   S.revealed.add(idx);
-  document.querySelector(`.tw[data-i="${idx}"]`).classList.add('revealed');
-  updatePanels();
-  const q = GAMES[S.g].questions[S.q];
-  if (S.revealed.size === q.answers.length) endRound(S.active);
-  updateControls();
-}
-
-function revealAll() {
-  const q = GAMES[S.g].questions[S.q];
-  q.answers.forEach((_, i) => {
-    if (!S.revealed.has(i)) { S.revealed.add(i); document.querySelector(`.tw[data-i="${i}"]`).classList.add('revealed'); }
-  });
-  updatePanels();
-}
-
-function addStrike() {
-  if (S.phase !== 'play' || S.strikes >= 3) return;
-  S.strikes++;
-  updateStrikes();
-  if (S.strikes >= 3) {
-    S.phase = 'steal';
-    S.active = S.active === 1 ? 2 : 1;
-    const b = document.getElementById('phaseBanner');
-    b.textContent = `★ STEAL — ${teamName(S.active)} gets ONE guess!`;
-    b.classList.add('show');
-    updatePanels(); updateControls();
+  S.owner[idx] = team;
+  const tw = document.querySelector(`.tw[data-i="${idx}"]`);
+  tw.classList.add('revealed');
+  const tag = document.getElementById('ot'+idx);
+  if (tag) {
+    tag.textContent = `T${team}`;
+    tag.className = `owner-tag owner-t${team}`;
   }
 }
 
-function endRound(winner) {
-  S.phase = 'done';
-  revealAll();
-  const total = GAMES[S.g].questions[S.q].answers.reduce((s,a) => s+a.p, 0);
-  S.scores[winner-1] += total;
-  updatePanels(); updateControls();
+function revealRemaining() {
+  const q = GAMES[S.g].questions[S.q];
+  q.answers.forEach((_, i) => {
+    if (!S.revealed.has(i)) {
+      S.revealed.add(i);
+      const tw = document.querySelector(`.tw[data-i="${i}"]`);
+      tw.classList.add('revealed', 'no-owner');
+    }
+  });
+  updateHostKey();
+}
 
-  document.getElementById('roTitle').textContent = `${teamName(winner)} wins the round!`;
-  document.getElementById('roSub').textContent = `+${total} points awarded.`;
-  renderScoreSummary('roScores');
-  const last = S.q >= GAMES[S.g].questions.length - 1;
-  document.getElementById('btnRoNext').textContent = last ? 'See Final Scores' : 'Next Question →';
-  document.getElementById('roOverlay').classList.add('show');
+/* ═══════════════════════════════════════════
+   ROUND END
+   ═══════════════════════════════════════════ */
+function endRound() {
+  S.phase = 'done';
+  document.getElementById('answerInput').disabled = true;
+  // Add round scores to totals
+  S.scores[0] += S.roundScores[0];
+  S.scores[1] += S.roundScores[1];
+  updatePanels();
+
+  const label = document.getElementById('inputLabel');
+  label.style.color = 'var(--teal)';
+  label.textContent = 'Round complete!';
+
+  // Delay so players can see the last revealed tile
+  setTimeout(() => {
+    const isLast = S.q >= GAMES[S.g].questions.length - 1;
+    document.getElementById('roTitle').textContent = 'Round Over!';
+    document.getElementById('roSub').textContent =
+      `${teamName(1)} earned ${S.roundScores[0]} pts · ${teamName(2)} earned ${S.roundScores[1]} pts`;
+    renderScoreSummary('roScores');
+    document.getElementById('btnRoNext').textContent = isLast ? 'See Final Scores →' : 'Next Question →';
+    document.getElementById('roOverlay').classList.add('show');
+    label.style.color = '';
+  }, 1800);
 }
 
 function nextQuestion() {
   document.getElementById('roOverlay').classList.remove('show');
   S.q++;
   if (S.q >= GAMES[S.g].questions.length) { showGameOver(); return; }
-  S.active = S.active === 1 ? 2 : 1;
+  S.active = S.active === 1 ? 2 : 1; // alternate who goes first next round
   renderRound();
 }
 
@@ -486,77 +582,130 @@ function showGameOver() {
   document.getElementById('goOverlay').classList.add('show');
 }
 
-/* ============================================================
+/* ═══════════════════════════════════════════
    UI HELPERS
-   ============================================================ */
+   ═══════════════════════════════════════════ */
 function updateStrikes() {
-  for (let i=0;i<3;i++){
+  for (let i=0;i<3;i++) {
     const el=document.getElementById('sm'+i);
-    const hit=i<S.strikes;
-    el.classList.toggle('hit',hit);
-    el.textContent=hit?'✗':'';
+    el.classList.toggle('hit', i<S.strikes);
+    el.textContent = i<S.strikes ? '✗' : '';
   }
 }
 
 function updatePanels() {
-  [1,2].forEach(t => {
-    const p=document.getElementById('tp'+t);
-    p.classList.remove('t-active','t-steal');
-    if(S.phase==='play'&&S.active===t) p.classList.add('t-active');
-    if(S.phase==='steal'&&S.active===t) p.classList.add('t-steal');
-    document.getElementById('ts'+t).textContent=S.scores[t-1].toLocaleString();
-    const q=GAMES[S.g].questions[S.q];
-    const rp=S.active===t ? [...S.revealed].reduce((s,i)=>s+q.answers[i].p,0) : 0;
-    document.getElementById('tr'+t).textContent=`+${rp} this round`;
-  });
+  const tp1=document.getElementById('tp1'), tp2=document.getElementById('tp2');
+  tp1.classList.toggle('t1-active', S.active===1 && S.phase==='play');
+  tp2.classList.toggle('t2-active', S.active===2 && S.phase==='play');
+  document.getElementById('ts1').textContent = S.scores[0].toLocaleString();
+  document.getElementById('ts2').textContent = S.scores[1].toLocaleString();
+  document.getElementById('tr1').textContent = `+${S.roundScores[0]} this round`;
+  document.getElementById('tr2').textContent = `+${S.roundScores[1]} this round`;
 }
 
-function updateControls() {
-  const show=(id,v)=>{document.getElementById(id).style.display=v?'':'none';};
-  show('btnWrong',     S.phase==='play');
-  show('btnStealRight',S.phase==='steal');
-  show('btnStealWrong',S.phase==='steal');
-  show('btnReveal',    S.phase!=='done');
-  show('btnNext',      S.phase==='done');
+function updateInputLabel() {
+  const lbl = document.getElementById('inputLabel');
+  const name = teamName(S.active);
+  const color = S.active === 1 ? 'var(--team1)' : 'var(--team2)';
+  lbl.innerHTML = `<span style="color:${color}">${name}</span> is guessing`;
 }
+
+function showFeedback(msg, cls) {
+  const el = document.getElementById('feedback');
+  el.textContent = msg; el.className = 'feedback ' + cls;
+}
+
+function teamName(t) { return document.getElementById('tn'+t).textContent.trim() || `Team ${t}`; }
 
 function renderScoreSummary(cid) {
-  document.getElementById(cid).innerHTML=[0,1].map(i=>{
-    const win=S.scores[i]>S.scores[1-i];
-    return `<div class="ss${win?' winner':''}"><div class="ssn">${teamName(i+1)}</div><div class="ssp">${S.scores[i].toLocaleString()}</div></div>`;
+  const [s1,s2] = S.scores;
+  document.getElementById(cid).innerHTML = [0,1].map(i => {
+    const win = S.scores[i] > S.scores[1-i];
+    return `<div class="ss s${i+1}${win?' winner':''}"><div class="ssn">${teamName(i+1)}</div><div class="ssp">${S.scores[i].toLocaleString()}</div></div>`;
   }).join('');
 }
 
-function teamName(t){ return document.getElementById('tn'+t).textContent.trim()||`Team ${t}`; }
+/* ═══════════════════════════════════════════
+   HOST KEY
+   ═══════════════════════════════════════════ */
+function buildHostKey() {
+  const q = GAMES[S.g].questions[S.q];
+  const body = document.getElementById('hkBody');
+  body.innerHTML = q.answers.map((a,i) =>
+    `<div class="hk-row${S.revealed.has(i)?' found':''}" id="hkr${i}">
+      <span class="hk-num">${i+1}.</span>
+      <span class="hk-ans">${a.t}</span>
+      <span class="hk-pts">${a.p}</span>
+    </div>`
+  ).join('');
+}
+function updateHostKey() {
+  GAMES[S.g].questions[S.q].answers.forEach((_, i) => {
+    const row = document.getElementById('hkr'+i);
+    if (row) row.classList.toggle('found', S.revealed.has(i));
+  });
+}
 
-/* ============================================================
+/* ═══════════════════════════════════════════
+   SLIDE NOTES
+   ═══════════════════════════════════════════ */
+function buildSlideNotes() {
+  const g = GAMES[S.g];
+  const qLabel = `Q${S.q+1}`;
+  // Show notes relevant to this game (global) or this specific question
+  const relevant = g.notes.filter(n => !n.q || n.q === qLabel);
+  const wrap = document.getElementById('slideNotesWrap');
+  const body = document.getElementById('snBody');
+  if (!relevant.length) { wrap.style.display='none'; return; }
+  wrap.style.display = '';
+  body.innerHTML = `<ul>${relevant.map(n=>`<li>${n.q?`<strong>[${n.q}]</strong> `:''} ${n.txt}</li>`).join('')}</ul>`;
+}
+
+/* ═══════════════════════════════════════════
+   COLLAPSIBLE TOGGLES
+   ═══════════════════════════════════════════ */
+document.getElementById('hkToggle').onclick = () => {
+  const body=document.getElementById('hkBody'), arrow=document.getElementById('hkArrow');
+  const open=body.classList.toggle('open');
+  arrow.textContent=open?'▲':'▼';
+};
+document.getElementById('snToggle').onclick = () => {
+  const body=document.getElementById('snBody'), arrow=document.getElementById('snArrow');
+  const open=body.classList.toggle('open');
+  arrow.textContent=open?'▲':'▼';
+};
+
+/* ═══════════════════════════════════════════
    BUTTON WIRING
-   ============================================================ */
-document.getElementById('btnWrong').onclick = addStrike;
-
-document.getElementById('btnStealRight').onclick = () => {
-  revealAll();
-  endRound(S.active);
-};
-
-document.getElementById('btnStealWrong').onclick = () => {
-  const original = S.active===1 ? 2 : 1;
-  revealAll();
-  endRound(original);
-};
+   ═══════════════════════════════════════════ */
+document.getElementById('submitBtn').onclick = submitGuess;
+document.getElementById('answerInput').onkeydown = e => { if(e.key==='Enter') submitGuess(); };
 
 document.getElementById('btnReveal').onclick = () => {
-  revealAll();
-  endRound(S.active);
+  if (S.phase==='done') return;
+  revealRemaining();
+  endRound();
 };
 
-document.getElementById('btnNext').onclick = nextQuestion;
+document.getElementById('btnSkip').onclick = () => {
+  if (S.phase==='done') return;
+  if (!confirm('Skip this question? No points awarded.')) return;
+  revealRemaining();
+  S.phase = 'done';
+  document.getElementById('answerInput').disabled = true;
+  const isLast = S.q >= GAMES[S.g].questions.length - 1;
+  document.getElementById('roTitle').textContent = 'Question Skipped';
+  document.getElementById('roSub').textContent = 'No points awarded.';
+  S.scores[0] += S.roundScores[0]; S.scores[1] += S.roundScores[1];
+  renderScoreSummary('roScores');
+  document.getElementById('btnRoNext').textContent = isLast ? 'See Final Scores →' : 'Next Question →';
+  document.getElementById('roOverlay').classList.add('show');
+};
+
 document.getElementById('btnRoNext').onclick = nextQuestion;
 document.getElementById('btnRoMenu').onclick = () => { document.getElementById('roOverlay').classList.remove('show'); showScreen('menuScreen'); };
 document.getElementById('btnGoMenu').onclick = () => { document.getElementById('goOverlay').classList.remove('show'); showScreen('menuScreen'); };
-document.getElementById('backBtn').onclick = () => { if(confirm('Go back to the menu? Scores will be lost.')) showScreen('menuScreen'); };
-
-updateControls();
+document.getElementById('backBtn').onclick = () => { if(confirm('Go back to menu? Scores will be lost.')) showScreen('menuScreen'); };
 </script>
 </body>
 </html>
