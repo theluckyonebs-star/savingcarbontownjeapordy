@@ -126,6 +126,9 @@
   .hk-desc{font-size:11px;color:var(--muted);font-weight:400;}
   .hk-pts{color:var(--gold);font-weight:900;min-width:28px;text-align:right;font-size:15px;}
   .hk-num{color:var(--muted);font-weight:800;min-width:18px;padding-top:1px;}
+  .hk-accept{background:#1a4a2e;color:#4ade80;border:1px solid #4ade80;border-radius:4px;padding:2px 7px;font-size:11px;cursor:pointer;font-weight:800;flex-shrink:0;line-height:1.4;}
+  .hk-accept:hover{background:#4ade80;color:#0a1628;}
+  .hk-row.found .hk-accept{display:none;}
 
   /* ── SLIDE NOTES ── */
   .slide-notes{background:#1a0d00;border:1px solid #7c3a0a;border-radius:12px;overflow:hidden;}
@@ -781,14 +784,32 @@ function buildHostKey() {
       <span class="hk-num">${i+1}.</span>
       <div class="hk-ans-wrap"><span class="hk-ans">${a.t}</span>${a.d?`<span class="hk-desc">${a.d}</span>`:''}</div>
       <span class="hk-pts">${a.p}</span>
+      <button class="hk-accept" onclick="manualAccept(${i})" title="Manually accept for active team">✓</button>
     </div>`
   ).join('');
 }
 function updateHostKey() {
   GAMES[S.g].questions[S.q].answers.forEach((_, i) => {
     const row = document.getElementById('hkr'+i);
-    if (row) row.classList.toggle('found', S.revealed.has(i));
+    if (!row) return;
+    row.classList.toggle('found', S.revealed.has(i));
+    const btn = row.querySelector('.hk-accept');
+    if (btn) btn.style.display = S.revealed.has(i) ? 'none' : '';
   });
+}
+function manualAccept(idx) {
+  if (S.revealed.has(idx) || S.phase !== 'play') return;
+  const ans = GAMES[S.g].questions[S.q].answers[idx];
+  revealTile(idx, S.active);
+  S.roundScores[S.active-1] += ans.p;
+  showFeedback(`✓ "${ans.t}" accepted — +${ans.p} pts for ${teamName(S.active)}!`, 'match');
+  const allRevealed = S.revealed.size === GAMES[S.g].questions[S.q].answers.length;
+  switchTeam();
+  updatePanels();
+  updateHostKey();
+  updateInputLabel();
+  if (allRevealed) { endRound(); return; }
+  setTimeout(() => document.getElementById('answerInput').focus(), 50);
 }
 
 /* ═══════════════════════════════════════════
