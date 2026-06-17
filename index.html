@@ -117,12 +117,15 @@
   .hk-toggle:hover{background:#06192b;color:var(--txt);}
   .hk-body{display:none;padding:10px 14px 12px;border-top:1px solid #0e3357;}
   .hk-body.open{display:block;}
-  .hk-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #0e2a3f;font-size:13px;gap:8px;}
+  .hk-metric{font-size:11px;color:#f59e0b;font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #1a3a1a;letter-spacing:.02em;}
+  .hk-row{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid #0e2a3f;font-size:13px;gap:8px;}
   .hk-row:last-child{border:none;}
-  .hk-row.found{opacity:.4;text-decoration:line-through;}
-  .hk-ans{color:#c7e3ff;font-weight:600;flex:1;}
-  .hk-pts{color:var(--gold);font-weight:800;min-width:28px;text-align:right;}
-  .hk-num{color:var(--muted);font-weight:800;min-width:18px;}
+  .hk-row.found{opacity:.38;text-decoration:line-through;}
+  .hk-ans-wrap{flex:1;display:flex;flex-direction:column;gap:1px;}
+  .hk-ans{color:#c7e3ff;font-weight:700;}
+  .hk-desc{font-size:11px;color:var(--muted);font-weight:400;}
+  .hk-pts{color:var(--gold);font-weight:900;min-width:28px;text-align:right;font-size:15px;}
+  .hk-num{color:var(--muted);font-weight:800;min-width:18px;padding-top:1px;}
 
   /* ── SLIDE NOTES ── */
   .slide-notes{background:#1a0d00;border:1px solid #7c3a0a;border-radius:12px;overflow:hidden;}
@@ -289,6 +292,8 @@
 <script>
 /* ═══════════════════════════════════════════
    GAME DATA
+   Points are grounded in real data — the host
+   key shows exactly what each number means.
    ═══════════════════════════════════════════ */
 const GAMES = [
   {
@@ -302,11 +307,31 @@ const GAMES = [
     ],
     questions:[
       { q:"Name somewhere on Earth where carbon is stored.",
-        answers:[{t:"Soil / Underground",p:30},{t:"Ocean / Sea",p:25},{t:"Trees / Forests",p:22},{t:"Atmosphere",p:13},{t:"Fossil Fuels",p:10}]},
+        metric:"Points = % of Earth's total active carbon (~44,000 Gt C)",
+        answers:[
+          {t:"Ocean / Sea",       p:86, d:"~38,000 Gt C = 86% of all active carbon"},
+          {t:"Fossil Fuels",      p: 9, d:"~4,000 Gt C  = 9%"},
+          {t:"Soil / Underground",p: 3, d:"~1,500 Gt C  = 3%"},
+          {t:"Atmosphere",        p: 2, d:"~860 Gt C    = 2%"},
+          {t:"Trees / Forests",   p: 1, d:"~550 Gt C    = 1%"},
+        ]},
       { q:"Name a step in the carbon cycle.",
-        answers:[{t:"Photosynthesis",p:35},{t:"Decomposition",p:28},{t:"Respiration / Breathing",p:22},{t:"Absorption",p:15}]},
-      { q:"Name something that makes a good carbon store.",
-        answers:[{t:"Forest / Trees",p:32},{t:"Ocean",p:28},{t:"Soil",p:22},{t:"Wetland / Bog",p:12},{t:"Atmosphere",p:6}]},
+        metric:"Points = annual gross carbon flux (Gt C/yr), normalised to 100",
+        answers:[
+          {t:"Photosynthesis",          p:40, d:"moves ~120 Gt C/yr out of the atmosphere"},
+          {t:"Ocean Absorption",        p:30, d:"gross ocean–atmosphere exchange ~90 Gt C/yr"},
+          {t:"Respiration / Breathing", p:20, d:"all organisms release ~60 Gt C/yr"},
+          {t:"Decomposition",           p:10, d:"dead matter releases ~30 Gt C/yr"},
+        ]},
+      { q:"Name something that makes a good long-term carbon store.",
+        metric:"Points = storage quality (size × stability), ocean=50 baseline",
+        answers:[
+          {t:"Ocean",        p:50, d:"38,000 Gt C locked in stable deep-ocean layers"},
+          {t:"Soil",         p:25, d:"1,500+ Gt C; centuries-long residence time"},
+          {t:"Wetland / Bog",p:15, d:"peat preserves carbon for thousands of years; 10× density of ordinary land"},
+          {t:"Forest / Trees",p: 8, d:"~550 Gt C; decades–centuries before it releases"},
+          {t:"Atmosphere",   p: 2, d:"860 Gt C but NOT a good store — this is where we need less carbon"},
+        ]},
     ]
   },
   {
@@ -315,15 +340,33 @@ const GAMES = [
     notes:[
       {q:null, txt:"Ensure slides cover ocean, forests, wetlands, mangroves, and seagrass as distinct sinks."},
       {q:"Q2",  txt:"<strong>Salt marshes</strong> as a blue carbon ecosystem may not be explicitly named on slides — add it."},
-      {q:"Q3",  txt:"The <strong>30%+ CO₂ absorption stat</strong> and <strong>phytoplankton's role</strong> should appear on slides. Add if missing."},
+      {q:"Q3",  txt:"The <strong>26% CO₂ absorption stat</strong> and <strong>phytoplankton's role</strong> should appear on slides. Add if missing."},
     ],
     questions:[
       { q:"Name a natural carbon sink.",
-        answers:[{t:"Ocean",p:33},{t:"Forest",p:28},{t:"Wetland / Bog / Peatland",p:20},{t:"Mangroves",p:12},{t:"Seagrass",p:7}]},
+        metric:"Points = % of total annual natural carbon sequestration (~5 Gt C/yr)",
+        answers:[
+          {t:"Ocean",               p:50, d:"absorbs ~2.5 Gt C/yr = 50% of all natural sinks"},
+          {t:"Forest",              p:40, d:"land forests absorb ~2.0 Gt C/yr = 40%"},
+          {t:"Wetland / Peatland",  p: 7, d:"~0.37 Gt C/yr = 7%"},
+          {t:"Mangroves",           p: 2, d:"~0.02–0.05 Gt C/yr = 2% (but very high per hectare!)"},
+          {t:"Seagrass",            p: 1, d:"~0.02 Gt C/yr = 1% (but highest per-hectare efficiency of all)"},
+        ]},
       { q:"Name a type of 'blue carbon' ecosystem.",
-        answers:[{t:"Mangroves",p:44},{t:"Seagrass meadows",p:35},{t:"Salt marshes",p:21}]},
+        metric:"Points = carbon sequestration efficiency vs typical land (1× = ordinary land)",
+        answers:[
+          {t:"Seagrass meadows",p:40, d:"locks carbon 40× faster per hectare than typical land (per curriculum)"},
+          {t:"Salt marshes",    p: 8, d:"stores ~8× more carbon per hectare than ordinary land"},
+          {t:"Mangroves",       p: 4, d:"captures 4× more carbon per hectare than a normal forest (per curriculum)"},
+        ]},
       { q:"Name a reason the ocean is Earth's biggest carbon sink.",
-        answers:[{t:"Absorbs over 30% of human CO₂",p:38},{t:"Phytoplankton convert CO₂ to organic matter",p:30},{t:"Dissolves CO₂ straight from the air",p:22},{t:"Covers most of Earth's surface",p:10}]},
+        metric:"Points = annual Gt C contribution of each mechanism",
+        answers:[
+          {t:"Phytoplankton convert CO₂ to organic matter",p:40, d:"biological pump exports ~10 Gt C/yr to the deep ocean"},
+          {t:"Absorbs ~26% of all human CO₂ emissions",    p:30, d:"net anthropogenic uptake ~2.5 Gt C/yr (26% of human total)"},
+          {t:"Dissolves CO₂ directly from the air",        p:25, d:"physical solubility pump; CO2 dissolves into cold surface water"},
+          {t:"Covers 71% of Earth's surface",              p: 5, d:"sheer area means even modest per-m² uptake adds up enormously"},
+        ]},
     ]
   },
   {
@@ -336,11 +379,29 @@ const GAMES = [
     ],
     questions:[
       { q:"Name a greenhouse gas found in the atmosphere.",
-        answers:[{t:"Carbon dioxide / CO2",p:42},{t:"Methane",p:35},{t:"Water vapor",p:15},{t:"Nitrous oxide",p:8}]},
+        metric:"Points = % of total human-caused radiative forcing (IPCC AR6)",
+        answers:[
+          {t:"Carbon dioxide / CO2",p:66, d:"responsible for ~66% of current human-caused warming"},
+          {t:"Methane",             p:17, d:"~17% of forcing; 80× more potent than CO₂ over 20 years"},
+          {t:"Water vapor",         p:10, d:"amplifies warming as a feedback; ~10% of forcing humans influence"},
+          {t:"Nitrous oxide",       p: 7, d:"~7% of forcing; 270× more potent than CO₂ over 100 years"},
+        ]},
       { q:"Name something that stores carbon in soil.",
-        answers:[{t:"Humus / Organic matter",p:38},{t:"Plant roots",p:28},{t:"Microbes / Bacteria / Fungi",p:22},{t:"Dead plant material",p:12}]},
+        metric:"Points = % of total soil carbon stock each form holds",
+        answers:[
+          {t:"Humus / Organic matter",       p:55, d:"humus makes up ~55% of soil carbon stock — stable for centuries"},
+          {t:"Dead plant material / Litter",  p:25, d:"fresh litter and partially decomposed matter = ~25% of stock"},
+          {t:"Plant roots",                   p:12, d:"living roots and root exudates = ~12% of stock"},
+          {t:"Microbes / Bacteria / Fungi",   p: 8, d:"microbial biomass = ~8% but processes ALL the carbon above it"},
+        ]},
       { q:"Name a reason soil stores more carbon than tree branches above ground.",
-        answers:[{t:"Less oxygen slows decay underground",p:40},{t:"Roots lock carbon deep down",p:30},{t:"Humus is decay-resistant",p:20},{t:"Soil covers far more area",p:10}]},
+        metric:"Points = relative importance of each mechanism (expert consensus)",
+        answers:[
+          {t:"Less oxygen underground slows decomposition",p:45, d:"anaerobic conditions cut decay rates by 10–100×"},
+          {t:"Roots physically move carbon deep underground",p:30, d:"~30% of photosynthesised carbon is pushed below ground via roots"},
+          {t:"Humus molecules are chemically decay-resistant",p:18, d:"humus bonds resist microbial breakdown for hundreds of years"},
+          {t:"Soil has far greater total area than branches",p: 7, d:"topsoil alone covers the entire land surface, branches do not"},
+        ]},
     ]
   },
   {
@@ -351,11 +412,29 @@ const GAMES = [
     ],
     questions:[
       { q:"Name something humans do that releases carbon into the air.",
-        answers:[{t:"Burn fossil fuels",p:38},{t:"Drive cars / Transportation",p:28},{t:"Cut down forests / Deforestation",p:18},{t:"Run factories / Industry",p:12},{t:"Fly in airplanes",p:4}]},
+        metric:"Points = % of global annual CO₂ emissions by activity (IEA 2022, ~37 Gt CO₂/yr total)",
+        answers:[
+          {t:"Burn fossil fuels / Energy",      p:34, d:"power generation & heating = 34% of global CO₂"},
+          {t:"Run factories / Industry",         p:25, d:"cement, steel, chemicals = 25% of global CO₂"},
+          {t:"Drive cars / Transportation",      p:16, d:"road transport = 16% of global CO₂"},
+          {t:"Cut down forests / Deforestation", p:14, d:"land-use change = 14% of global CO₂"},
+          {t:"Fly in airplanes",                 p: 3, d:"aviation = ~2.5% of global CO₂ (but 3.5% of effective warming)"},
+        ]},
       { q:"Name a fossil fuel.",
-        answers:[{t:"Coal",p:40},{t:"Oil / Petroleum",p:35},{t:"Natural gas",p:25}]},
+        metric:"Points = % of global CO₂ emitted by each fuel type",
+        answers:[
+          {t:"Coal",        p:42, d:"coal burning = 42% of fossil-fuel CO₂ — the dirtiest fuel"},
+          {t:"Oil / Petroleum",p:33, d:"oil = 33% of fossil-fuel CO₂"},
+          {t:"Natural gas",  p:25, d:"natural gas = 25% of fossil-fuel CO₂ (cleanest of the three)"},
+        ]},
       { q:"Name an animal whose digestion releases greenhouse gases.",
-        answers:[{t:"Cows",p:52},{t:"Sheep",p:26},{t:"Pigs",p:14},{t:"Goats",p:8}]},
+        metric:"Points = % of global livestock methane from enteric fermentation (FAO data)",
+        answers:[
+          {t:"Cows",  p:65, d:"cattle = 65% of all livestock methane from digestion"},
+          {t:"Sheep", p:15, d:"sheep = 15% of livestock methane"},
+          {t:"Goats", p:12, d:"goats = ~12% of livestock methane"},
+          {t:"Pigs",  p: 8, d:"pigs = ~8% (mostly from manure, not digestion — they don't ruminate)"},
+        ]},
     ]
   },
   {
@@ -368,11 +447,28 @@ const GAMES = [
     ],
     questions:[
       { q:"Name a technology humans use to artificially capture carbon.",
-        answers:[{t:"Direct Air Capture / DAC",p:36},{t:"Point-source capture at factories",p:32},{t:"Underground / geological storage",p:22},{t:"Oxy-fuel combustion",p:10}]},
+        metric:"Points = current + near-term operational capacity (Mt CO₂/yr), normalised to 100",
+        answers:[
+          {t:"Point-source capture at factories", p:55, d:"~220 Mt CO₂/yr already operational — the largest deployed method"},
+          {t:"Underground / geological storage",  p:25, d:"~45 Mt CO₂/yr injection capacity currently; needed for all other methods"},
+          {t:"Direct Air Capture / DAC",          p:15, d:"~0.01 Mt CO₂/yr today but scaling fast; only method that works anywhere"},
+          {t:"Oxy-fuel combustion",               p: 5, d:"small pilots only; makes CO₂ concentrated and easier to capture"},
+        ]},
       { q:"Name a challenge with Direct Air Capture technology.",
-        answers:[{t:"Air is only 0.04% CO2",p:38},{t:"Very expensive",p:32},{t:"Uses a lot of energy",p:20},{t:"Hard to scale up",p:10}]},
+        metric:"Points = relative impact on DAC's cost and effectiveness (expert ranking)",
+        answers:[
+          {t:"Air is only 0.04% CO₂ — extremely dilute", p:42, d:"dilute CO₂ means enormous volumes of air must be processed; root cause of all other challenges"},
+          {t:"Extremely expensive ($400–1,000/tonne CO₂)", p:30, d:"currently 5–10× more expensive than point-source capture; main barrier to scale"},
+          {t:"Uses massive amounts of energy",             p:20, d:"~2,000 kWh per tonne CO₂ captured — must use clean energy or it defeats the purpose"},
+          {t:"Very hard to scale up quickly",              p: 8, d:"infrastructure, land, water, and energy requirements all multiply at scale"},
+        ]},
       { q:"Name something needed to safely store CO₂ underground.",
-        answers:[{t:"Porous rock layer",p:42},{t:"Cap rock / sealing layer on top",p:38},{t:"Deep location",p:20}]},
+        metric:"Points = criticality for safe long-term storage (geologists' ranking)",
+        answers:[
+          {t:"Porous rock layer",          p:42, d:"CO₂ is injected into pores of sedimentary rock (like sandstone) >800 m deep"},
+          {t:"Cap rock / sealing layer",   p:40, d:"impermeable cap rock (e.g. shale) above prevents CO₂ from escaping — most safety-critical"},
+          {t:"Deep location (800m+ down)", p:18, d:"below 800 m CO₂ becomes supercritical — denser and less likely to migrate upward"},
+        ]},
     ]
   },
 ];
@@ -631,10 +727,11 @@ function renderScoreSummary(cid) {
 function buildHostKey() {
   const q = GAMES[S.g].questions[S.q];
   const body = document.getElementById('hkBody');
-  body.innerHTML = q.answers.map((a,i) =>
+  const metricLine = q.metric ? `<div class="hk-metric">${q.metric}</div>` : '';
+  body.innerHTML = metricLine + q.answers.map((a,i) =>
     `<div class="hk-row${S.revealed.has(i)?' found':''}" id="hkr${i}">
       <span class="hk-num">${i+1}.</span>
-      <span class="hk-ans">${a.t}</span>
+      <div class="hk-ans-wrap"><span class="hk-ans">${a.t}</span>${a.d?`<span class="hk-desc">${a.d}</span>`:''}</div>
       <span class="hk-pts">${a.p}</span>
     </div>`
   ).join('');
