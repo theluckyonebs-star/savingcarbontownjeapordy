@@ -482,22 +482,71 @@ function initState(gIdx) {
 
 /* ═══════════════════════════════════════════
    ANSWER MATCHING
+   Three tiers, checked in order:
+   1. Exact / substring (most precise)
+   2. Synonym-normalized exact / substring
+   3. Any shared significant word (≥3 chars) — the "right idea" tier
    ═══════════════════════════════════════════ */
 function clean(s) {
   return s.replace(/₂/g,'2').replace(/co2/gi,'co2').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
 }
+
+const SYNONYMS = [
+  [/\b(breathing?|breath|exhaling?|exhale?s?|inhaling?|inhale?s?)\b/g, 'respiration'],
+  [/\b(algae|plankton|microalgae)\b/g,                                  'phytoplankton'],
+  [/\b(dirt|ground)\b/g,                                                'soil'],
+  [/\b(factory|factories|manufacturing|industrial)\b/g,                 'factory'],
+  [/\b(decomposing?|decaying?|decay|rotting?|rot)\b/g,                  'decomposition'],
+  [/\b(consuming?|consumption|eating?|ate|eats?)\b/g,                   'eating'],
+  [/\b(combustion|burning?|burns?|burnt|burned)\b/g,                    'burning'],
+  [/\b(pipelines?|piping)\b/g,                                          'pipe'],
+  [/\b(lorr\w+|vehicle\w*)\b/g,                                         'truck'],
+  [/\b(filtration|filtering)\b/g,                                       'filter'],
+  [/\b(location|place|spot|destination)\b/g,                            'stop'],
+  [/\b(wood\w*|timber)\b/g,                                             'trunk'],
+  [/\b(sea floor|ocean floor|ocean bed)\b/g,                            'seafloor'],
+  [/\b(cap rock|caprock|sealing layer)\b/g,                             'cap'],
+  [/\b(underground|below ground)\b/g,                                   'depth'],
+  [/\b(fans?|fan blades?)\b/g,                                          'fans'],
+  [/\b(chemical filter|chemical filters|engineered filter\w*)\b/g,      'filters'],
+];
+
+function normalize(s) {
+  for (const [pat, rep] of SYNONYMS) s = s.replace(pat, rep);
+  return s;
+}
+
 function findMatch(input) {
-  const inp = clean(input);
-  if (inp.length < 2) return -1;
+  const raw  = clean(input);
+  const norm = normalize(raw);
+  if (raw.length < 2) return -1;
+
+  const normWds = norm.split(/\s+/).filter(w => w.length >= 3);
   const q = GAMES[S.g].questions[S.q];
+
   for (let i = 0; i < q.answers.length; i++) {
     if (S.revealed.has(i)) continue;
     const variants = q.answers[i].t.split('/').map(v => clean(v));
-    for (const v of variants) {
+    const normVariants = variants.map(v => normalize(v));
+
+    for (let vi = 0; vi < variants.length; vi++) {
+      const v  = variants[vi];
+      const nv = normVariants[vi];
       if (!v || v.length < 2) continue;
-      if (v === inp) return i;
-      if (inp.length >= 3 && v.includes(inp)) return i;
-      if (v.length >= 3 && inp.includes(v)) return i;
+
+      // Tier 1 — raw exact / substring
+      if (v === raw) return i;
+      if (raw.length >= 3 && v.includes(raw)) return i;
+      if (v.length  >= 3 && raw.includes(v))  return i;
+
+      // Tier 2 — synonym-normalized exact / substring
+      if (nv === norm) return i;
+      if (norm.length >= 3 && nv.includes(norm)) return i;
+      if (nv.length   >= 3 && norm.includes(nv)) return i;
+
+      // Tier 3 — any shared significant word (≥3 chars)
+      const nvWds = nv.split(/\s+/).filter(w => w.length >= 3);
+      if (normWds.some(iw => nvWds.includes(iw))) return i;
     }
   }
   return -1;
