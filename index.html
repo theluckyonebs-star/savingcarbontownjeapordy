@@ -287,30 +287,26 @@
    compressed so every answer is worth 10–45 pts.
    ═══════════════════════════════════════════ */
 const GAMES = [
-  /* ── GAME 1 · Slides 6–7 ── */
+  /* ── GAME 1 · Slides 5–6 ── */
   {
-    title:"Atmosphere & Ocean", color:"#22d3a8",
-    desc:"Slides 6–7",
-    notes:[
-      {q:null, txt:"All questions draw only from <strong>Slide 6 (Atmosphere)</strong> and <strong>Slide 7 (Ocean)</strong>."},
-      {q:"Q2", txt:"Slide 7 mentions phytoplankton, kelp, and seafloor as ocean carbon stores. Make sure all three are clearly labeled on the slide before playing."},
-      {q:"Q3", txt:"Slide 6 uses the words 'central hub' and 'first stop' — confirm those exact phrases are visible on the slide so students can recall them."},
-    ],
+    title:"Atmosphere & Overview", color:"#22d3a8",
+    desc:"Slides 5–6",
+    notes:[],
     questions:[
       { q:"Name a greenhouse gas stored in the atmosphere.",
         metric:"Points = relative emphasis on Slide 6 (CO₂ named first and most often)",
         answers:[
           {t:"CO2 / Carbon dioxide",  p:40, d:"Slide 6 — named first; the primary greenhouse gas the slide focuses on"},
-          {t:"Methane",               p:30, d:"Slide 6 — second gas listed; explicitly named alongside CO₂"},
+          {t:"Methane",               p:30, d:"Slide 6 — explicitly listed alongside CO₂"},
           {t:"Water vapor",           p:20, d:"Slide 6 — third gas listed on the slide"},
-          {t:"Nitrous oxide / N2O",   p:10, d:"Slide 6 — fourth greenhouse gas; ~270× more potent than CO₂ over 100 years"},
+          {t:"Nitrous oxide / N2O",   p:10, d:"Slide 6 — fourth greenhouse gas listed on the slide"},
         ]},
-      { q:"Name something in the ocean that stores or absorbs carbon.",
-        metric:"Points = prominence on Slide 7 (phytoplankton described in most detail)",
+      { q:"Name a natural carbon sink.",
+        metric:"Points = order listed on Slide 5 under 'Sinks'",
         answers:[
-          {t:"Phytoplankton",p:40, d:"Slide 7 — use dissolved carbon as food; the ocean's main biological absorber"},
-          {t:"Seafloor",     p:35, d:"Slide 7 — stores carbon in sediment for thousands of years"},
-          {t:"Kelp",         p:25, d:"Slide 7 — kelp forests lock carbon away for thousands of years"},
+          {t:"Oceans / Ocean",    p:40, d:"Slide 5 — listed first under Sinks; absorbs more carbon than it releases"},
+          {t:"Forests / Forest",  p:35, d:"Slide 5 — listed second under Sinks"},
+          {t:"Wetlands / Wetland",p:25, d:"Slide 5 — listed third under Sinks"},
         ]},
       { q:"Name a way the atmosphere is described in the carbon cycle.",
         metric:"Points = how prominently each description appears on Slide 6",
@@ -322,31 +318,43 @@ const GAMES = [
     ]
   },
 
-  /* ── GAME 2 · Slides 8–10 ── */
+  /* ── GAME 2 · Slides 7–9 ── */
   {
     title:"Stores", color:"#a855f7",
-    desc:"Slides 8–10",
-    notes:[
-      {q:null, txt:"All questions draw only from <strong>Slide 8 (Soil)</strong>, <strong>Slide 9 (Blue Carbon)</strong>, and <strong>Slide 10 (Forests)</strong>."},
-      {q:"Q1", txt:"Slide 8 mentions bacteria, fungi, and dead organic matter. Make sure all three terms appear clearly on the slide."},
-      {q:"Q3", txt:"Slide 10 names roots, trunk, leaves, and soil as tree carbon storage locations. Confirm all four are labeled on the slide before playing."},
-    ],
+    desc:"Slides 7–9",
+    notes:[],
     questions:[
+      { q:"Name something in the ocean that stores or absorbs carbon.",
+        metric:"Points = prominence on Slide 7 (phytoplankton described in most detail)",
+        answers:[
+          {t:"Phytoplankton",p:40, d:"Slide 7 — use dissolved carbon as food; the ocean's main biological absorber"},
+          {t:"Seafloor",     p:35, d:"Slide 7 — stores carbon in sediment for thousands of years"},
+          {t:"Kelp",         p:25, d:"Slide 7 — kelp forests lock carbon away for thousands of years"},
+        ]},
       { q:"Name something found in soil that helps create or store carbon.",
         metric:"Points = prominence on Slide 8 (bacteria and fungi described as the main mechanism)",
         answers:[
           {t:"Bacteria",              p:35, d:"Slide 8 — bacteria break down dead matter and convert it into stable soil carbon"},
           {t:"Fungi",                 p:30, d:"Slide 8 — fungi break down organic matter; listed alongside bacteria as key decomposers"},
           {t:"Dead organic matter / Dead plants / Dead matter", p:25, d:"Slide 8 — dead plant and animal matter is the raw material that becomes soil carbon"},
-          {t:"Roots",                 p:10, d:"Slide 8/10 — plant roots physically move carbon down into the soil"},
+          {t:"Roots",                 p:10, d:"Slide 8 — plant roots physically move carbon down into the soil"},
         ]},
       { q:"Name a type of blue carbon ecosystem.",
         metric:"Points = order listed on Slide 9 (mangroves described first and in most detail)",
         answers:[
           {t:"Mangroves",        p:42, d:"Slide 9 — listed first; dense leaf and branch systems trap and hold carbon"},
-          {t:"Tidal marshes",    p:35, d:"Slide 9 — muddy anaerobic soil stores large amounts of carbon"},
+          {t:"Tidal marshes",    p:35, d:"Slide 9 — dense vegetation traps more carbon in muddy soil"},
           {t:"Seagrass / Seagrass meadows", p:23, d:"Slide 9 — prevent water currents from stirring up and releasing soil carbon"},
         ]},
+    ]
+  },
+
+  /* ── GAME 3 · Slides 10–12 ── */
+  {
+    title:"Sinks", color:"#3b82f6",
+    desc:"Slides 10–12",
+    notes:[],
+    questions:[
       { q:"Name a part of a tree where carbon is stored.",
         metric:"Points = mass of carbon each part holds, per Slide 10",
         answers:[
@@ -355,19 +363,6 @@ const GAMES = [
           {t:"Soil",        p:25, d:"Slide 10 — roots sequester carbon deep into the surrounding soil"},
           {t:"Leaves",      p:10, d:"Slide 10 — leaves absorb CO₂ during photosynthesis; smaller temporary store"},
         ]},
-    ]
-  },
-
-  /* ── GAME 3 · Slides 11–13 ── */
-  {
-    title:"Sinks", color:"#3b82f6",
-    desc:"Slides 11–13",
-    notes:[
-      {q:null, txt:"All questions draw only from <strong>Slide 11 (Wetlands)</strong>, <strong>Slide 12 (Animals)</strong>, and <strong>Slide 13 (Fossil Fuels)</strong>."},
-      {q:"Q2", txt:"Slide 12 names cows for methane production. <strong>Other animals are not named on the slide</strong> — don't accept sheep, pigs, etc. unless you add them to the slide first."},
-      {q:"Q3", txt:"Slide 13 uses the words 'heat', 'pressure', and 'millions of years' — confirm all three appear on the slide so students can find them."},
-    ],
-    questions:[
       { q:"Name something that helps wetlands trap and hold carbon.",
         metric:"Points = prominence of each factor on Slide 11",
         answers:[
@@ -383,6 +378,15 @@ const GAMES = [
           {t:"Eating / Consumption",   p:20, d:"Slide 12 — animals eat plants and take in the carbon stored in them"},
           {t:"Decomposition / Decomposing", p:10, d:"Slide 12 — dead animals decompose and return carbon to the soil"},
         ]},
+    ]
+  },
+
+  /* ── GAME 4 · Slides 13–15 ── */
+  {
+    title:"Sources", color:"#ef4444",
+    desc:"Slides 13–15",
+    notes:[],
+    questions:[
       { q:"Name a condition that turned buried plants and animals into fossil fuels.",
         metric:"Points = emphasis on Slide 13 (heat and pressure are the headline mechanism)",
         answers:[
@@ -390,19 +394,6 @@ const GAMES = [
           {t:"Pressure",           p:40, d:"Slide 13 — Pressure & Heat section; compression from rock layers above is the other key factor"},
           {t:"Time / Millions of years", p:20, d:"Slide 13 — Scarcity section; the process takes millions of years, making fossil fuels non-renewable"},
         ]},
-    ]
-  },
-
-  /* ── GAME 4 · Slides 14–16 ── */
-  {
-    title:"Sources", color:"#ef4444",
-    desc:"Slides 14–16",
-    notes:[
-      {q:null, txt:"Questions 1–2 draw from <strong>Slide 14 (Humans)</strong>. Question 3 draws from <strong>Slide 16 (Point-Source Capture)</strong>. Slide 15 is a title slide with no content."},
-      {q:"Q2", txt:"Slide 14 names two things human emissions harm: the <strong>ocean's chemistry</strong> and the <strong>natural absorption rate</strong>. Make sure both are labeled clearly on the slide."},
-      {q:"Q3", txt:"Slide 16 lists four methods: solvents, oxy-fuel, membranes, pre-combustion. <strong>Confirm all four are on the slide</strong> before playing this question."},
-    ],
-    questions:[
       { q:"Name a human activity that releases carbon into the atmosphere.",
         metric:"Points = relative scale on Slide 14 (burning fossil fuels called the main driver)",
         answers:[
@@ -410,54 +401,43 @@ const GAMES = [
           {t:"Factories / Manufacturing",           p:30, d:"Slide 14 — Industry and Transport section; factories are listed as major emitters"},
           {t:"Shipping",                            p:25, d:"Slide 14 — Industry and Transport section; shipping listed alongside factories"},
         ]},
-      { q:"Name something human carbon emissions are harming.",
-        metric:"Points = equal emphasis in Slide 14 (both consequences explicitly named)",
-        answers:[
-          {t:"Ocean / Ocean chemistry",     p:50, d:"Slide 14 — Ocean Chemistry section; emissions weaken the ocean's ability to store carbon"},
-          {t:"Natural absorption / Nature", p:50, d:"Slide 14 — Accelerated Release; humans emit faster than nature can absorb back in"},
-        ]},
       { q:"Name a point-source carbon capture method.",
-        metric:"Points = order listed on Slide 16 (separation/solvents described first)",
+        metric:"Points = order listed on Slide 15 (separation/solvents described first)",
         answers:[
-          {t:"Solvents / Liquid solvents",   p:35, d:"Slide 16 — Separation method; liquid solvents bind to CO₂ in exhaust fumes"},
-          {t:"Oxy-fuel",                     p:30, d:"Slide 16 — burning in pure oxygen concentrates CO₂ in the exhaust, making capture easier"},
-          {t:"Membranes / Membrane filters", p:25, d:"Slide 16 — Filtering method; membranes separate CO₂ from exhaust post-combustion"},
-          {t:"Pre-combustion / Gasification",p:10, d:"Slide 16 — fuel is gasified before burning so it produces hydrogen + water instead of CO₂"},
+          {t:"Solvents / Liquid solvents",   p:35, d:"Slide 15 — Separation method; liquid solvents bind to CO₂ in exhaust fumes"},
+          {t:"Oxy-fuel",                     p:30, d:"Slide 15 — burning in pure oxygen concentrates CO₂ in the exhaust, making capture easier"},
+          {t:"Membranes / Membrane filters", p:25, d:"Slide 15 — Filtering method; membranes separate CO₂ from exhaust post-combustion"},
+          {t:"Pre-combustion / Gasification",p:10, d:"Slide 15 — fuel is gasified before burning so it produces hydrogen + water instead of CO₂"},
         ]},
     ]
   },
 
-  /* ── GAME 5 · Slides 16–18 (the 3 Artificial Cycle slides) ── */
+  /* ── GAME 5 · Slides 16–17 (slide 18 = Guest Speaker, no content) ── */
   {
     title:"Artificial Solutions", color:"#f59e0b",
-    desc:"Slides 16–18",
-    notes:[
-      {q:null, txt:"Questions draw from <strong>Slide 17 (Direct Air Capture)</strong> and <strong>Slide 18 (CO₂ Storage)</strong>. Slide 16 content was used in Game 4."},
-      {q:"Q1", txt:"Slide 17 should clearly show the three DAC steps: fans → filters → heat. Confirm all three are labeled before playing."},
-      {q:"Q2", txt:"Slide 18 lists two transport options: <strong>pipes (on-site)</strong> and <strong>trucks (off-site)</strong>. Make sure both are visible on the slide."},
-      {q:"Q3", txt:"Slide 18 names <strong>porous rock</strong> and <strong>cap layer</strong> as storage requirements. Confirm both terms appear on the slide."},
-    ],
+    desc:"Slides 16–17",
+    notes:[],
     questions:[
       { q:"Name a step in the Direct Air Capture process.",
-        metric:"Points = order of steps on Slide 17 (fans first, then filters, then heat)",
+        metric:"Points = order of steps on Slide 16 (fans first, then filters, then heat)",
         answers:[
-          {t:"Fans / Large fans",      p:35, d:"Slide 17 — first step; large fans pull in huge volumes of outside air"},
-          {t:"Filters / Chemical filters", p:35, d:"Slide 17 — second step; engineered filters concentrate and trap CO₂ from the air"},
-          {t:"Heating / Heat",         p:30, d:"Slide 17 — final step; CO₂ is heated to separate it from the filter so it can be collected"},
+          {t:"Fans / Large fans",          p:35, d:"Slide 16 — first step; large fans pull in huge volumes of outside air"},
+          {t:"Filters / Chemical filters", p:35, d:"Slide 16 — second step; engineered filters concentrate and trap CO₂ from the air"},
+          {t:"Heating / Heat",             p:30, d:"Slide 16 — final step; CO₂ is heated to separate it from the filter so it can be collected"},
         ]},
       { q:"Name a way captured CO2 is transported to a storage site.",
-        metric:"Points = scale of each transport method on Slide 18 (pipes = larger scale)",
+        metric:"Points = scale of each transport method on Slide 17 (pipes = larger scale)",
         answers:[
-          {t:"Pipes / Pipelines",    p:45, d:"Slide 18 — on-site method; CO₂ is piped directly underground, 1km+ deep"},
-          {t:"Trucks / Tank trucks", p:35, d:"Slide 18 — off-site method; CO₂ compressed into tanks and driven to a storage site"},
-          {t:"Compressed tanks",     p:20, d:"Slide 18 — CO₂ must first be compressed into tanks before truck transport"},
+          {t:"Pipes / Pipelines",    p:45, d:"Slide 17 — on-site method; CO₂ is piped directly underground, 1km+ deep"},
+          {t:"Trucks / Tank trucks", p:35, d:"Slide 17 — off-site method; CO₂ compressed into tanks and driven to a storage site"},
+          {t:"Compressed tanks",     p:20, d:"Slide 17 — CO₂ must first be compressed into tanks before truck transport"},
         ]},
       { q:"Name something an underground CO2 storage site needs.",
-        metric:"Points = criticality for safe long-term storage, per Slide 18",
+        metric:"Points = criticality for safe long-term storage, per Slide 17",
         answers:[
-          {t:"Porous rock",    p:45, d:"Slide 18 — CO₂ is injected into porous rock underground so it has somewhere to go and stay"},
-          {t:"Cap layer / Cap rock / Cap", p:35, d:"Slide 18 — an impermeable cap layer above the porous rock prevents CO₂ from leaking back up"},
-          {t:"Depth / 1km deep / Underground", p:20, d:"Slide 18 — storage must be at least 1km below the surface to safely contain the CO₂"},
+          {t:"Porous rock",    p:45, d:"Slide 17 — CO₂ is injected into porous rock underground so it has somewhere to go and stay"},
+          {t:"Cap layer / Cap rock / Cap", p:35, d:"Slide 17 — an impermeable cap layer above the porous rock prevents CO₂ from leaking back up"},
+          {t:"Depth / 1km deep / Underground", p:20, d:"Slide 17 — storage must be at least 1km below the surface to safely contain the CO₂"},
         ]},
     ]
   },
