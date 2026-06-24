@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carbon Town Jeopardy — Waste Hierarchy</title>
+<style>
+  :root{
+    --bg:#0a1929;--panel:#0b2035;
+    --blue:#1b4f7e;--blue2:#0e3357;--blue-border:#2a6aa0;
+    --gold:#f5c542;--gold2:#d9a800;
+    --teal:#22d3a8;
+    --txt:#eaf4ff;--muted:#7fa6c4;--line:#1d4368;
+    --green:#4ade80;--green2:#16a34a;
+    --red:#ef4444;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:radial-gradient(120% 120% at 50% -10%,#143657 0%,var(--bg) 55%,#05101c 100%);color:var(--txt);min-height:100%;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;}
+  button{font:inherit;cursor:pointer;}
+
+  /* ── HEADER ── */
+  .top{text-align:center;padding:16px 16px 4px;}
+  .kicker{display:block;letter-spacing:.3em;font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;margin-bottom:8px;}
+  .top h1{font-size:clamp(22px,4.5vw,42px);font-weight:900;background:linear-gradient(180deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+  /* ── TURN BANNER ── */
+  .turn{text-align:center;font-size:15px;font-weight:800;padding:6px 16px 2px;color:var(--muted);}
+  .turn b{font-size:18px;}
+
+  /* ── SCOREBOARD ── */
+  .scores{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:10px 16px;}
+  .team{position:relative;background:linear-gradient(180deg,#103a5f,#0c2742);border:2px solid var(--line);border-radius:14px;padding:10px 16px 12px;text-align:center;min-width:170px;transition:box-shadow .2s,border-color .2s;}
+  .team.active{box-shadow:0 0 0 3px var(--tc,var(--teal));}
+  .team .tname{font-size:14px;font-weight:900;outline:none;border-radius:6px;padding:2px 6px;display:inline-block;max-width:150px;}
+  .team .tname:focus{background:#0e2c47;box-shadow:0 0 0 2px var(--teal);}
+  .team .sc{font-size:38px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;margin:4px 0;color:var(--tc,#fff);}
+  .team .adj{display:flex;gap:6px;justify-content:center;}
+  .team .adj button{width:30px;height:28px;border-radius:7px;border:1px solid var(--line);background:#0b2035;color:var(--txt);font-weight:900;font-size:16px;}
+  .team .adj button:hover{background:#0e2c47;}
+  .team .remove{position:absolute;top:5px;right:6px;width:20px;height:20px;border-radius:50%;border:1px solid var(--line);background:#0b2035;color:var(--muted);font-size:12px;font-weight:900;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;}
+  .team .remove:hover{background:var(--red);color:#fff;border-color:var(--red);}
+  .add-team{background:transparent;color:var(--teal);border:2px dashed var(--line);border-radius:14px;padding:10px 16px;font-weight:800;font-size:14px;min-width:120px;}
+  .add-team:hover{border-color:var(--teal);background:#0e2c47;}
+
+  /* ── BOARD ── */
+  .board-wrap{flex:1;display:flex;justify-content:center;padding:6px 12px 20px;}
+  .board{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;width:100%;max-width:1300px;}
+  .cat{background:linear-gradient(180deg,var(--blue),var(--blue2));border:1px solid var(--blue-border);border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-size:clamp(12px,1.5vw,18px);letter-spacing:.04em;text-transform:uppercase;color:var(--gold);padding:14px 6px;min-height:60px;}
+  .cell{background:linear-gradient(180deg,#0f3a63,#0a2641);border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(20px,2.6vw,34px);color:var(--gold);min-height:74px;transition:transform .08s,box-shadow .15s,background .2s;}
+  .cell:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.45);background:linear-gradient(180deg,#15487a,#0d2f52);}
+  .cell.used{background:#06192b;color:transparent;cursor:default;box-shadow:none;transform:none;border-color:#0e2c47;}
+  .cell.used:hover{background:#06192b;}
+
+  /* ── OVERLAY ── */
+  .overlay{position:fixed;inset:0;background:rgba(2,9,18,.9);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+  .overlay.show{display:flex;}
+  .modal{width:min(760px,96vw);background:linear-gradient(180deg,#0f3a63,#0a2641);border:1px solid var(--blue-border);border-radius:20px;padding:28px 32px;text-align:center;animation:pop .2s ease;}
+  @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+  .m-cat{font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:6px;}
+  .m-val{font-size:32px;font-weight:900;color:var(--gold);margin-bottom:12px;}
+
+  /* ── TIMER ── */
+  .timer{font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--green);line-height:1;margin-bottom:6px;}
+  .timer.warn{color:var(--gold);}
+  .timer.danger{color:var(--red);animation:pulse .6s ease infinite;}
+  .timer.up{color:var(--red);}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+  .timer-track{height:8px;border-radius:99px;background:#0b2035;overflow:hidden;margin-bottom:16px;border:1px solid var(--line);}
+  .timer-fill{height:100%;width:100%;background:var(--green);transition:width .25s linear,background .25s;}
+  .m-q{font-size:clamp(20px,3.2vw,32px);font-weight:800;line-height:1.4;color:#eaf4ff;margin-bottom:20px;}
+  .m-a{font-size:clamp(22px,3.6vw,38px);font-weight:900;color:var(--green);margin-bottom:22px;min-height:46px;display:none;}
+  .m-a.show{display:block;animation:pop .2s ease;}
+  .m-a .lbl{display:block;font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+  .btn{border:none;border-radius:12px;padding:12px 20px;font-weight:800;font-size:15px;box-shadow:0 2px 0 rgba(0,0,0,.35);transition:transform .08s,filter .15s;margin:4px;color:#fff;}
+  .btn:hover{filter:brightness(1.08);} .btn:active{transform:translateY(2px);box-shadow:none;}
+  .btn-reveal{background:linear-gradient(180deg,#ffe28a,var(--gold));color:#06202f;}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line);box-shadow:none;}
+  .btn-ghost:hover{background:#0e2c47;color:var(--txt);}
+  .award-row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px;}
+  .award-hint{font-size:12px;color:var(--muted);margin-bottom:8px;}
+
+  .footer{text-align:center;padding:10px;color:var(--muted);font-size:12px;}
+  .reset{background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:6px 14px;font-weight:700;font-size:12px;}
+  .reset:hover{background:#0e2c47;color:var(--txt);}
+</style>
+</head>
+<body>
+
+  <div class="top">
+    <span class="kicker">Carbon Clash · EcoRise Camp</span>
+    <h1>WASTE HIERARCHY JEOPARDY</h1>
+  </div>
+
+  <div class="turn" id="turnBanner">—</div>
+
+  <div class="scores" id="scores"></div>
+
+  <div class="board-wrap">
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="footer">
+    <button class="reset" onclick="resetGame()">↺ Reset Board &amp; Scores</button>
+  </div>
+
+  <!-- Question overlay -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <div class="m-cat" id="mCat">—</div>
+      <div class="m-val" id="mVal">—</div>
+      <div class="timer" id="timer">0:30</div>
+      <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
+      <div class="m-q" id="mQ">—</div>
+      <div class="m-a" id="mA"><span class="lbl">Answer</span><span id="mAtext"></span></div>
+      <button class="btn btn-reveal" id="btnReveal" onclick="revealAnswer()">Show Answer</button>
+      <div id="awardBlock" style="display:none;">
+        <div class="award-hint">Who got it right?</div>
+        <div class="award-row" id="awardRow"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ═══════════════════════════════════════════
+   BOARD DATA  ·  6 categories × 6 clues
+   Waste hierarchy (Reduce → Reuse → Recycle →
+   Energy Recovery → Dispose) + Compost.
+   Answers are one word or a very well-known phrase,
+   written for a 4th-grade reading level.
+   ═══════════════════════════════════════════ */
+const VALUES = [100, 200, 300, 400, 500, 600];
+
+const CATEGORIES = [
+  {
+    name: "Reduce",
+    clues: [
+      { q:'"Reduce" means to use ___ of something.', a:"Less" },
+      { q:"Bringing your own bag to the store cuts down on ___ bags.", a:"Plastic" },
+      { q:"Turn off the ___ while you brush your teeth so you don't waste it.", a:"Water" },
+      { q:"Walking or biking instead of riding in a car reduces air ___.", a:"Pollution" },
+      { q:"Buying one big container instead of lots of little ones means less ___.", a:"Packaging" },
+      { q:"Taking only the food you will actually eat helps reduce food ___.", a:"Waste" },
+    ]
+  },
+  {
+    name: "Reuse",
+    clues: [
+      { q:'"Reuse" means to use something ___.', a:"Again" },
+      { q:"A water bottle you can fill up over and over is called a ___ bottle.", a:"Reusable" },
+      { q:"Giving clothes you've outgrown to a younger kid to wear is called ___ them.", a:"Donating" },
+      { q:"At the library, lots of people get to ___ the same book.", a:"Share" },
+      { q:"You can wrap a present in old ___ instead of buying new wrapping paper.", a:"Newspaper" },
+      { q:"Old tires can be hung from a tree to make a fun playground ___.", a:"Swing" },
+    ]
+  },
+  {
+    name: "Recycle",
+    clues: [
+      { q:'"Recycle" means to turn old trash into something ___.', a:"New" },
+      { q:"The recycling symbol is made of three bending ___.", a:"Arrows" },
+      { q:"At home, bottles and cans go into the recycling ___.", a:"Bin" },
+      { q:"Recycling paper means we don't have to cut down as many ___.", a:"Trees" },
+      { q:"This metal drink container is one of the easiest things to recycle.", a:"Can" },
+      { q:"Old glass bottles can be melted down and made into new ___.", a:"Glass" },
+    ]
+  },
+  {
+    name: "Compost",
+    clues: [
+      { q:"Compost is made from food ___ and yard clippings.", a:"Scraps" },
+      { q:"When food scraps break down, they turn into healthy ___ for plants.", a:"Soil" },
+      { q:"Banana peels and apple cores CAN go in the compost. True or false?", a:"True" },
+      { q:"Plastic and metal should NOT go in the compost. True or false?", a:"True" },
+      { q:"These wiggly little creatures help break down a compost pile.", a:"Worms" },
+      { q:'Gardeners love finished compost so much they call it "black ___."', a:"Gold" },
+    ]
+  },
+  {
+    name: "Energy",
+    clues: [
+      { q:"When you leave a room, you should always turn off the ___.", a:"Lights" },
+      { q:"Power that comes from the sun is called ___ energy.", a:"Solar" },
+      { q:"Tall machines with spinning blades that make power from wind are called ___.", a:"Windmills" },
+      { q:"Coal and oil that pollute the air when we burn them are called ___ fuels.", a:"Fossil" },
+      { q:"Switching to LED light ___ uses much less energy.", a:"Bulbs" },
+      { q:"Leaving a charger plugged in when nothing is on it still wastes ___.", a:"Energy" },
+    ]
+  },
+  {
+    name: "Dispose",
+    clues: [
+      { q:"Trash that can't be reused or recycled goes in the ___.", a:"Trash" },
+      { q:"Throwing trash on the ground instead of in a bin is called ___.", a:"Littering" },
+      { q:"Old batteries are special waste and should NOT go in the regular trash. True or false?", a:"True" },
+      { q:"A big place where garbage gets buried in the ground is called a ___.", a:"Landfill" },
+      { q:'In the waste hierarchy, throwing things away should be your ___ choice (first or last?).', a:"Last" },
+      { q:'Old phones and computers are called "e-waste." What does the "e" stand for?', a:"Electronic" },
+    ]
+  },
+];
+
+/* color palette assigned to teams in order */
+const PALETTE = ["#3b82f6","#e0479b","#22d3a8","#f59e0b","#a855f7","#ef4444","#4ade80","#60a5fa"];
+
+let teams = [
+  { name:"Team 1", score:0 },
+  { name:"Team 2", score:0 },
+];
+let turnIdx = 0;     // whose turn it is to pick
+let used = {};       // "cat-row" -> true
+let current = null;  // {cat,row,value}
+
+/* ═══════════════════════════════════════════
+   TIMER  ·  30-second countdown per question
+   ═══════════════════════════════════════════ */
+const TIME_LIMIT = 30;
+let timerId = null;
+let timeLeft = TIME_LIMIT;
+
+function startTimer() {
+  clearTimer();
+  timeLeft = TIME_LIMIT;
+  paintTimer();
+  timerId = setInterval(() => {
+    timeLeft--;
+    paintTimer();
+    if (timeLeft <= 0) {
+      clearTimer();
+      beep();
+    }
+  }, 1000);
+}
+
+function clearTimer() {
+  if (timerId) { clearInterval(timerId); timerId = null; }
+}
+
+function paintTimer() {
+  const el = document.getElementById('timer');
+  const fill = document.getElementById('timerFill');
+  const t = Math.max(0, timeLeft);
+  el.className = 'timer' + (t === 0 ? ' up' : t <= 5 ? ' danger' : t <= 10 ? ' warn' : '');
+  el.textContent = t === 0 ? "⏰ Time's up!" : '0:' + String(t).padStart(2, '0');
+  const pct = (t / TIME_LIMIT) * 100;
+  fill.style.width = pct + '%';
+  fill.style.background = t <= 5 ? 'var(--red)' : t <= 10 ? 'var(--gold)' : 'var(--green)';
+}
+
+/* short tone when time runs out (ignored if audio is blocked) */
+function beep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'square'; o.frequency.value = 660;
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(.12, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .5);
+    o.start(); o.stop(ctx.currentTime + .5);
+  } catch (e) {}
+}
+
+/* ═══════════════════════════════════════════
+   SCOREBOARD + TURNS
+   ═══════════════════════════════════════════ */
+function colorOf(i){ return PALETTE[i % PALETTE.length]; }
+
+function renderScores() {
+  const wrap = document.getElementById('scores');
+  wrap.innerHTML = '';
+  teams.forEach((t, i) => {
+    const c = colorOf(i);
+    const el = document.createElement('div');
+    el.className = 'team' + (i === turnIdx ? ' active' : '');
+    el.style.setProperty('--tc', c);
+    el.style.borderColor = (i === turnIdx) ? c : 'var(--line)';
+    const canRemove = teams.length > 2;
+    el.innerHTML =
+      (canRemove ? `<button class="remove" title="Remove team" onclick="removeTeam(${i})">×</button>` : '') +
+      `<span class="tname" contenteditable spellcheck="false" oninput="renameTeam(${i},this.textContent)">${t.name}</span>` +
+      `<div class="sc">${t.score.toLocaleString()}</div>` +
+      `<div class="adj"><button onclick="adjust(${i},-100)">−</button><button onclick="adjust(${i},100)">+</button></div>`;
+    wrap.appendChild(el);
+  });
+  const add = document.createElement('button');
+  add.className = 'add-team';
+  add.textContent = '+ Add Team';
+  add.onclick = addTeam;
+  wrap.appendChild(add);
+  renderTurn();
+}
+
+function renderTurn() {
+  const b = document.getElementById('turnBanner');
+  const t = teams[turnIdx];
+  b.innerHTML = `It's <b style="color:${colorOf(turnIdx)}">${t.name}</b>'s turn to pick`;
+}
+
+function addTeam() {
+  teams.push({ name:"Team " + (teams.length + 1), score:0 });
+  renderScores();
+}
+
+function removeTeam(i) {
+  if (teams.length <= 2) return;
+  if (!confirm(`Remove ${teams[i].name}?`)) return;
+  teams.splice(i, 1);
+  if (turnIdx >= teams.length) turnIdx = 0;
+  renderScores();
+}
+
+function renameTeam(i, txt) { teams[i].name = txt.trim() || ('Team ' + (i+1)); renderTurn(); }
+
+function adjust(i, amt) { teams[i].score += amt; renderScores(); }
+
+function nextTurn() { turnIdx = (turnIdx + 1) % teams.length; renderScores(); }
+
+/* ═══════════════════════════════════════════
+   BOARD
+   ═══════════════════════════════════════════ */
+function buildBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  CATEGORIES.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'cat';
+    el.textContent = c.name;
+    board.appendChild(el);
+  });
+  VALUES.forEach((val, r) => {
+    CATEGORIES.forEach((c, ci) => {
+      const key = ci + '-' + r;
+      const el = document.createElement('div');
+      el.className = 'cell' + (used[key] ? ' used' : '');
+      el.textContent = used[key] ? '' : val;
+      if (!used[key]) el.onclick = () => openCell(ci, r);
+      board.appendChild(el);
+    });
+  });
+}
+
+function openCell(ci, r) {
+  current = { cat: ci, row: r, value: VALUES[r] };
+  const c = CATEGORIES[ci];
+  const clue = c.clues[r];
+  document.getElementById('mCat').textContent = c.name;
+  document.getElementById('mVal').textContent = VALUES[r] + ' pts';
+  document.getElementById('mQ').textContent = clue.q;
+  document.getElementById('mAtext').textContent = clue.a;
+  document.getElementById('mA').classList.remove('show');
+  document.getElementById('btnReveal').style.display = '';
+  document.getElementById('awardBlock').style.display = 'none';
+  document.getElementById('overlay').classList.add('show');
+  startTimer();
+}
+
+function revealAnswer() {
+  clearTimer();
+  document.getElementById('mA').classList.add('show');
+  document.getElementById('btnReveal').style.display = 'none';
+  // build an award button per team, then a "nobody" option
+  const row = document.getElementById('awardRow');
+  row.innerHTML = teams.map((t, i) =>
+    `<button class="btn" style="background:${colorOf(i)}" onclick="award(${i})">+${current.value} · ${t.name}</button>`
+  ).join('') + `<button class="btn btn-ghost" onclick="closeCell()">Nobody</button>`;
+  document.getElementById('awardBlock').style.display = 'block';
+}
+
+function award(i) {
+  if (current) { teams[i].score += current.value; markUsed(); }
+  finishCell();
+}
+
+function closeCell() { markUsed(); finishCell(); }
+
+function markUsed() {
+  if (!current) return;
+  used[current.cat + '-' + current.row] = true;
+  buildBoard();
+}
+
+function finishCell() {
+  closeOverlay();
+  nextTurn();         // teams take turns — advance to the next picker
+}
+
+function closeOverlay() {
+  clearTimer();
+  document.getElementById('overlay').classList.remove('show');
+  current = null;
+}
+
+function resetGame() {
+  if (!confirm('Reset the whole board and all scores?')) return;
+  teams.forEach(t => t.score = 0);
+  turnIdx = 0;
+  used = {};
+  buildBoard();
+  renderScores();
+}
+
+/* clicking the dark background cancels WITHOUT using the tile or changing turn */
+document.getElementById('overlay').addEventListener('click', e => {
+  if (e.target.id === 'overlay') closeOverlay();
+});
+
+renderScores();
+buildBoard();
+</script>
+</body>
+</html>
